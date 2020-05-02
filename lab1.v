@@ -139,6 +139,10 @@ Section propositional_logic.
   Proof.
   Admitted.
 
+  Lemma destruct_before_left_right : (P \/ Q) -> (P -> R) -> (Q -> T) -> R \/ T.
+  Proof.
+  Admitted.
+
   Lemma imp_to_not_not_or : (P -> Q) -> ~~(~P \/ Q).
   Proof.
     intros H1 H2.
