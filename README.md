@@ -1,5 +1,5 @@
-# Introduction-to-Coq
-[Introduction to the Coq proof assistant](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S) (TUWEL online course)
+# Introduction to the Coq proof assistant
+[TUWEL online course](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S)  and the [Discord server](https://discord.gg/PgFSYE)
 
 ## Learning outcomes
 
