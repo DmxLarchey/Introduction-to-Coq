@@ -33,6 +33,7 @@ Due to the Covid-19 infection, the course and lab sessions will be given online
   * standalone apps for Linux, Windows & IOS
 - need to register a (free) account on [discordapp.com](https://discordapp.com)
 - the account of the teacher is: **Dominique Larchey-Wendling#0283**
+- the Discord server: [**Introduction to Coq**](https://discord.gg/PgFSYE)
 
 ### For lab. sessions, the students need to install `Coq` and `CoqIde` on their own computer
 - no need to get the latest version (`v8.11`)
