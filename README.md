@@ -5,7 +5,9 @@
 
 After successful completion of the course, students are able to understand 
 and use the Coq proof assistant; in particular to formalize propositional logic, 
-quantifiers inductive types and inductive predicates
+quantifiers inductive types and inductive predicates. Hopefully they will be able
+to show by themselves that the [Tower of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi)
+move strategy is correct and optimal.
 
 ## Subject of course
 
