@@ -1,5 +1,5 @@
 # Introduction to the Coq proof assistant
-[TUWEL online course](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S)  and the [Discord server](https://discord.gg/PgFSYE)
+[TUWEL online course](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S)  and the [Discord server](https://discord.gg/DEJ8Ce) or contact me on Discord: **Dominique Larchey-Wendling#0283**
 
 ## Learning outcomes
 
