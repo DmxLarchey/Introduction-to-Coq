@@ -1,11 +1,13 @@
-# Introduction-to-Coq
-[Introduction to the Coq proof assistant](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S) (TUWEL online course)
+# Introduction to the Coq proof assistant
+[TUWEL online course](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S)  and the [Discord server](https://discord.gg/DEJ8Ce) or contact me on Discord: **Dominique Larchey-Wendling#0283**
 
 ## Learning outcomes
 
 After successful completion of the course, students are able to understand 
 and use the Coq proof assistant; in particular to formalize propositional logic, 
-quantifiers inductive types and inductive predicates
+quantifiers inductive types and inductive predicates. Hopefully they will be able
+to show by themselves that the [Tower of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi)
+move strategy is correct and optimal.
 
 ## Subject of course
 
