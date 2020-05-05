@@ -18,7 +18,7 @@
   * the Discord app: discordapp.com
     - free of charge, allows screen sharing
     - works in a navigator (tested on Chrome)
-    - standalone apps for linux, windows & ios
+    - standalone apps for Linux, Windows & IOS
   - need to register a (free) account on discordapp.com
   - the account of the teacher is: **Dominique Larchey-Wendling#0283**
 
@@ -36,9 +36,9 @@
 
 - For support material:
   - recommended reads:
-    - [short](https://coq.inria.fr/a-short-introduction-to-coq)
-    - [less short](https://www.lri.fr/~paulin/LASER/course-notes.pdf): the first 20 pages of C. Paulin's introduction course
-    - [The Coq'Art book (reference)](https://www.labri.fr/perso/casteran/CoqArt)
+    - [very short summary](https://coq.inria.fr/a-short-introduction-to-coq)
+    - less short: the first 20 pages of [C. Paulin's introduction course](https://www.lri.fr/~paulin/LASER/course-notes.pdf) 
+    - [The Coq'Art book](https://www.labri.fr/perso/casteran/CoqArt) (reference)
   - their are many Coq courses available online
     - eg. https://github.com/coq/coq/wiki/CoqInTheClassroom
   - we will roughtly follow the [course of P. Casteran](https://www.labri.fr/perso/casteran/FM/Logique):
