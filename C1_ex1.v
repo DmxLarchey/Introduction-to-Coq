@@ -1,5 +1,7 @@
 
-Parameters P Q R : Prop.
+Section C1.
+
+Variables P Q R : Prop.
 
 Section my_first_proof.
 
@@ -7,9 +9,10 @@ Section my_first_proof.
   Hypothesis H0 : ~ Q.
 
   Check H.
+  Check H0.
 
   Lemma my_first_lemma : R -> R /\ P.
-  Proof.
+(*  Proof. *)
     intro r.
     split.
      exact r. (* assumption *)
@@ -19,6 +22,10 @@ Section my_first_proof.
        assumption.
        assumption.
   Qed.
+
+  Print my_first_lemma.
+
+  Print H.
 
   Check H.
 
