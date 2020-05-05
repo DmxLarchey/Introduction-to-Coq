@@ -28,9 +28,9 @@
   - anything above `Coq 8.8` (3 years old) will work
   - the [`Coq` main site](https://coq.inria.fr)
   - for Linux, try in that order:
-    1/ install coq & coqide available for your distribution
-    2/ https://github.com/coq/coq/wiki/Installation-of-Coq-on-Linux
-    3/ or install it through `opam 2` (for experts)
+    1. install coq & coqide available for your distribution
+    2. https://github.com/coq/coq/wiki/Installation-of-Coq-on-Linux
+    3. or install it through `opam 2` (for experts)
   - installing `Coq` for Windows or Mac users:
     - there are [packages in here](https://github.com/coq/coq/releases/tag/V8.11.0)
 
@@ -38,7 +38,7 @@
   - recommended reads:
     - [very short summary](https://coq.inria.fr/a-short-introduction-to-coq)
     - less short: the first 20 pages of [C. Paulin's introduction course](https://www.lri.fr/~paulin/LASER/course-notes.pdf) 
-    - [The Coq'Art book](https://www.labri.fr/perso/casteran/CoqArt) (reference)
+    - reference: [The Coq'Art book](https://www.labri.fr/perso/casteran/CoqArt) 
   - their are many Coq courses available online
     - eg. https://github.com/coq/coq/wiki/CoqInTheClassroom
   - we will roughtly follow the [course of P. Casteran](https://www.labri.fr/perso/casteran/FM/Logique):
