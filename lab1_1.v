@@ -114,7 +114,6 @@ Section Minimal_propositional_logic.
 
 End Minimal_propositional_logic.
 
-
 Section propositional_logic.
 
   (** Propositional Intuitionistic logic *)
@@ -132,69 +131,144 @@ Section propositional_logic.
 
   Lemma and_assoc : P /\ (Q /\ R) -> (P /\ Q) /\ R.
   Proof.
-  Admitted.
+    intros (? & ? & ?).
+    do 2 (split; trivial).
+  Qed.
  
   Print and_assoc.
 
   Lemma and_imp_dist : (P -> Q) /\ (R -> S) -> P /\ R -> Q /\ S.
   Proof.
-  Admitted.
+   (* intros (H1 & H2) (H3 & H4).
+    split.
+    + apply H1; trivial.
+    + apply H2. trivial. *)
+    intros (H1 & H2) [ ? ? ] ; split; [ apply H1 | apply H2 ]; trivial. 
+    (* intros [] []; split; auto. *)
+  Qed.
 
   (* ~P (not P) is defined as P -> False *)
 
+  (* Hypothesis H0 : True. (* to illustrate name collision *) *)
+
   Lemma not_contrad :  ~(P /\ ~P).
   Proof.
-  Admitted.
- 
+    (* unfold not; intros [ ? H ]; apply H; trivial. *) 
+    intros [ ? H ].
+    destruct H. (* apply H ; *)
+    trivial.
+  Qed.
+
+  Print not_contrad.
+
   Lemma or_and_not : (P \/ Q) /\ ~P -> Q.
   Proof.
-  Admitted.
+    intros [ [ | ] ? ]; [ absurd P | ]; trivial.
+  Qed.
 
   Lemma not_not_exm : ~ ~ (P \/ ~ P).
   Proof.
-  Admitted.
+    unfold not.
+    intros H.
+    apply H.
+    right.
+    intros H1.
+    apply H.
+    left.
+    trivial.
+  Qed.
 
   Lemma de_morgan_1 : ~(P \/ Q) -> ~P /\ ~Q.
   Proof.
-  Admitted.
+    intros H.
+    split.
+    + intros H1.
+      apply H.
+      left; trivial.
+    + intros H1.
+      apply H.
+      right.
+      trivial.
+    (* intros H; split; intro; apply H; [ left | right ]; trivial. *)
+  Qed.
  
   Lemma de_morgan_2 : ~P /\ ~Q -> ~(P \/ Q).
   Proof.
-  Admitted.
+    intros ( H1 & H2 ) [ H3 | H3 ].
+    + apply H1; trivial.
+    + apply H2; trivial.
+    (* intros (H1 & H2) []; [ apply H1 | apply H2 ]; trivial. *)
+  Qed.
 
   Lemma de_morgan_3 : ~P \/ ~Q -> ~(P /\ Q).
   Proof.
-  Admitted.
+    intros [ H | H ] []; apply H; trivial.
+  Qed.
+
+  (* Fail  ~(P /\ Q) ->  ~P \/ ~Q. *)
 
   Lemma or_to_imp : P \/ Q -> ~ P -> Q.
   Proof.
-  Admitted.
+    intros [ H1 | H1 ].
+    + intros []; trivial.
+    + trivial.
+    (* intros []; [ intros [] | ]; trivial. *)
+  Qed.
 
   Lemma destruct_before_left_right : (P \/ Q) -> (P -> R) -> (Q -> T) -> R \/ T.
   Proof.
-  Admitted.
+    intros [ H1 | H1 ] H2 H3.
+    + left; apply H2, H1.
+    + right; apply H3, H1.
+  Qed.
 
   Lemma imp_to_not_not_or : (P -> Q) -> ~~(~P \/ Q).
   Proof.
     intros H1 H2.
     assert (~ Q) as H3. (** State intermediate lemma *)
-    + admit.
-    + admit.
-  Admitted.
+    + contradict H2. (* intros H3; apply H2. *)
+      right; trivial.
+    + apply H2.
+      left.
+      intros H4; apply H3. (* contradict H3. *)
+      apply H1, H4.
+  Qed.
 
   Lemma contraposition : (P -> Q) -> (~Q -> ~P).
   Proof.
-  Admitted.
+    intros H1 H2 H3.
+    apply H2, H1, H3.
+    (* intros H1 H; contradict H; apply H1, H. *)
+  Qed.
 
   (** A <-> B is defined as (A -> B) /\ (B -> A) *)
 
   Lemma contraposition' : (~P -> ~Q) <-> (~~Q -> ~~P).
   Proof.
-  Admitted.
+    split.
+    + intros H1 H2 H3; apply H2, H1, H3.
+    + intros H1 H2 H3.
+      apply H1.
+      * intros H.
+        apply H.
+        trivial.
+      * trivial.
+  Qed.
 
   Lemma contraposition'' : (~P -> ~Q) <-> ~~(Q -> P).
   Proof.
-  Admitted.
+    split.
+    + intros H1 H2.
+      apply H2; intros H3.
+      unfold not in H1.
+      destruct H1.
+      * intros H4.
+        apply H2; trivial.
+      * trivial.
+    + intros H1 H2 H3.
+      apply H1; intros H4.
+      apply H2, H4, H3.
+  Qed.
  
   Section weak_XM.
 
@@ -203,7 +277,13 @@ Section propositional_logic.
 
    Lemma weak_XM : ~~R.
    Proof.
-   Admitted.
+     intros H2.
+     apply H2, H1.
+     intros H3; apply H2.
+     apply H0; trivial.
+   Qed.
+
+   Check weak_XM.
 
   End weak_XM.
 

@@ -1,6 +1,6 @@
 Parameter it_is_raining : Prop.
 
-Parameters P Q R : Prop.
+Parameters P Q R T : Prop.
 
 Check P.
 
@@ -37,6 +37,63 @@ Qed.
 Fact conj_comm' : P /\ Q -> Q /\ P.
 Proof.
   intros H; split; destruct H; trivial.
+Qed.
+
+Fact conj_comm'' : P /\ Q -> Q /\ P.
+Proof.
+  intros H.
+  destruct H as [ H1 H2 ].
+  split; assumption.
+Qed.
+
+Fact conj_comm''' : P /\ Q -> Q /\ P.
+Proof.
+  intros H.
+  destruct H as [ H1 H2 ].
+  split; [ assumption | trivial ].
+Qed.
+
+Section assert.
+
+  Hypothesis (H : P -> Q)
+             (H0 : Q -> R)
+             (H1 : (P -> R) -> T -> Q)
+             (H2 : (P -> R) -> T). 
+
+  Lemma L8 : Q.
+  Proof.
+    assert (H3 : P -> R).
+    + intros H3.
+      apply H0.
+      apply H.
+      apply H3.
+    + apply H1.
+      * trivial.
+      * apply H2.
+        trivial.
+  Qed.
+
+End assert.
+
+Section Ex5.
+
+  Hypothesis (H : T -> R -> (P \/ Q))
+             (H0 : ~ (R /\ Q))
+             (H1 : T).
+
+  Lemma R5 : R -> P.
+  Proof.
+    intros H2.
+    destruct H as [ G1 | G2 ]; trivial.
+    destruct H0.
+    split; assumption.
+  Qed.
+
+End Ex5.
+
+Lemma L2 : (P \/ Q) /\ ~P -> Q.
+Proof.
+  intros [ [ H1 | H1 ] H2 ]; [ destruct H2 | ]; assumption.
 Qed.
 
 Print conj_comm.
