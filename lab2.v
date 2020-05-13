@@ -8,7 +8,12 @@ First, let us look at some example : *)
 
 Lemma P3Q : forall P Q : Prop, (((P->Q)->Q)->Q) -> P -> Q.
 Proof.
-Admitted.
+  intros P Q H1 H2.
+  apply H1.
+  intros H3.
+  apply H3.
+  apply H2.
+Qed.
 
 (* for P : Prop, "~ P" is a convenient notation for "not P" 
    and "not P" is defined as "P -> False" 
@@ -19,13 +24,18 @@ Admitted.
 
 Lemma triple_neg : forall P:Prop, ~ ~ ~ P -> ~ P.
 Proof.
-Admitted.
+  unfold not.
+  apply (fun P => P3Q P False). 
+Qed.
 
 (* try the contradict tactic *)
 
 Lemma not_or_1 : forall P Q : Prop, ~(P \/ Q) -> ~P.
 Proof.
-Admitted.
+  intros P Q H.
+  contradict H.
+  left; trivial.
+Qed.
  
 Section not_or_1_example.
 
@@ -37,7 +47,13 @@ Section not_or_1_example.
 
   Lemma L1 : ~ n = 0.
   Proof.
-  Admitted.
+    intros E.
+    unfold not in H.
+    apply H.
+    + left.
+      trivial.
+    + trivial.
+  Qed.
 
 End not_or_1_example.
 
