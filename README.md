@@ -8,7 +8,7 @@ Have a look at the herein [resource file](resources.md) for general information 
 After successful completion of the course, students are able to understand 
 and use the Coq proof assistant; in particular to formalize propositional logic, 
 quantifiers inductive types and inductive predicates. Hopefully they will be able
-to show by themselves that the [Tower of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi)
+to show by themselves that the [Towers of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi)
 move strategy is correct and optimal.
 
 ## Subject of course
@@ -16,6 +16,12 @@ move strategy is correct and optimal.
 This course gives an introduction to the Coq proof assistant:
 
 _Coq is a formal proof management system. It provides a formal language to write mathematical definitions, executable algorithms and theorems together with an environment for semi-interactive development of machine-checked proofs. Typical applications include the certification of properties of programming languages (e.g. the CompCert compiler certification project, the Verified Software Toolchain for verification of C programs, or the Iris framework for concurrent separation logic), the formalization of mathematics (e.g. the full formalization of the Feit-Thompson theorem, or homotopy type theory), and teaching._
+
+## Project: the Towers of Hanoi
+
+The project --- see [detailed project description](HANOI.md) --- consists in modeling the game of 
+the [Towers of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hanoi) and proving that
+the well know recursive Hanoi sequence of moves is a correct.
 
 ## Teaching methods
 
