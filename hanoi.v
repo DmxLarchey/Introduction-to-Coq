@@ -157,8 +157,6 @@ Hint Resolve incl_refl incl_appl incl_appr : core.
   
      for any split m = l++r we have l ⪻ r
 
-  Notice the difference between the < and the ⪡ symbols
-
 *)
 
 Definition strict_lower_upper l r := forall x y, x ∈ l -> y ∈ r -> x < y.
