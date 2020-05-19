@@ -19,6 +19,7 @@ at the end of the project file.
 
 The project starts May 20th 2020 and lasts one month. It is an 
 **individual project** and students will be required to send a 
-completed project file to [Dominique Larchey-Wendling](mailto:larchey@loria.fr) 
+completed project file to me [Dominique Larchey-Wendling](mailto:larchey@loria.fr) 
 after that one month period has expired. The deadline is fixed 
-on **June 22th 2020**.  
+on **June 22th 2020**. Please contact me if you have any question
+or difficulty regarding the project.
