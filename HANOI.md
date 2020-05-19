@@ -9,11 +9,19 @@ is correct, ie. it can displace a full tower from the left rod/tower
 to the right rod/tower, using the middle rod/tower as temporary storage. 
 
 The standalone Coq source file [`hanoi.v`](hanoi.v) contains
-code to achieve this outcome. Your goal is to _fill the holes_
-which are totally or partially admitted proof scripts.
+code to achieve this outcome. Your goal is to _fill the holes._
+Holes are totally admitted or partially admitted proof scripts.
+The proof sketch will lead you to the goal. 
 
-For those willing to go further, some suggested improvments appear
-at the end of the project file.
+* You do not need to invent complicated inductions or introduce 
+  new notions, the modeling is done for you; 
+* But you need to be able to understand how the informal problem
+  is modeled by these definitions and notations; 
+* Your capacity to use and combine tactics will be critical
+  to your success in filling proof holes;
+* Some holes are very easy, and some other are much more difficult;
+* For those willing to go further, some suggested improvements 
+  appear at the end of the project file.
 
 ## Expectations and Timetable
 
