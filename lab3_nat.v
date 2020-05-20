@@ -46,21 +46,33 @@ Section plus_minus_mult.
   
   Fact plus_0_r n : n ⊕ 0 = n.
   Proof.
-  Admitted.
+    induction n as [ | n IHn ].
+    + reflexivity.
+    + simpl.
+      f_equal.
+      trivial.
+    (* induction n; simpl; f_equal; trivial. *)
+  Qed.
 
   Fact plus_a_Sb a b : a ⊕ S b = S (a ⊕ b).
   Proof.
-  Admitted.
+    induction a; simpl; f_equal; trivial.
+  Qed.
 
   Hint Resolve plus_0_r : core.
 
   Fact plus_comm a b : a ⊕ b = b ⊕ a.
   Proof.
-  Admitted.
+    induction a as [ | a IHa ]; simpl; auto.
+    rewrite plus_a_Sb, IHa; trivial.
+  Qed.
 
   Fact plus_assoc a b c : a ⊕ b ⊕ c = a ⊕ (b ⊕ c).
   Proof.
-  Admitted.
+    induction a.
+    + simpl; trivial.
+    + simpl; f_equal; trivial.
+  Qed.
 
   Fixpoint myminus (a b : nat) :=
     match a, b with
@@ -72,37 +84,78 @@ Section plus_minus_mult.
 
   Fact minus_0 a : a ⊖ 0 = a.
   Proof.
-  Admitted.
+    destruct a; simpl; trivial.
+  Qed.
+
+  Hint Resolve minus_0 : core.
 
   Fact plus_minus a b : a ⊕ b ⊖ a = b.
   Proof.
-  Admitted.
+   (* induction a as [ | a IHa ]; simpl.
+    + trivial.
+    + trivial. *)
+    induction a; trivial.
+  Qed.
 
   Fact minus_diag a : a ⊖ a = 0.
   Proof.
-  Admitted.
+    (* induction a; trivial. *)
+    rewrite <- (plus_0_r a) at 1.
+    apply plus_minus.
+  Qed.
 
   Hint Resolve minus_diag : core.
 
+  (* a - b + b <> a *)
+
+  Eval compute in 1 - 3 + 3.
+
   Fact minus_plus_assoc a b c : a ⊖ b ⊖ c = a ⊖ (b ⊕ c).
   Proof.
-  Admitted.
+    revert b; induction a as [ | a IHa ]; intros b.
+    + simpl; trivial.
+    + (* destruct b; simpl.
+      * trivial.
+      * trivial. *)
+      destruct b; simpl; trivial.
+  Qed.
 
-  Fact minus_eq a b : a = b <-> a ⊖ b = 0 /\ b ⊖ a = 0.
+  Fact minus_eq a b : a = b <-> (a ⊖ b = 0 /\ b ⊖ a = 0).
   Proof.
-  Admitted.
+    split.
+    + (* intros E; split; rewrite E, minus_diag; reflexivity. *)
+      intros ->; auto.
+    + intros [ H1 H2 ].
+      revert a b H1 H2.
+      (* induction a as [ | a IHa ]; intros [ | b ]; simpl.
+      1-3: auto.
+      intros.
+      f_equal.
+      apply IHa; trivial. *)
+      induction a; intros []; simpl; auto.
+  Qed.
 
-  Fact plus_reg_l a b c : a ⊕ b = a ⊕ c -> b = c.
+  Fact plus_cancel_l a b c : a ⊕ b = a ⊕ c -> b = c.
   Proof.
-  Admitted.
+    intros E.
+    rewrite <- (plus_minus a b), <- (plus_minus a c).
+    f_equal.
+    trivial.
+  Qed.
 
-  Fact plus_reg_r a b c : a ⊕ c = b ⊕ c -> a = b.
+  Fact plus_cancel_r a b c : a ⊕ c = b ⊕ c -> a = b.
   Proof.
-  Admitted.
+    do 2 rewrite (plus_comm _ c).
+    apply plus_cancel_l.
+  Qed.
 
   Fact plus_eq_0 a b : a ⊕ b = 0 <-> a = 0 /\ b = 0.
   Proof.
-  Admitted.
+    split.
+    + destruct a; simpl; auto.
+      discriminate.
+    + intros (-> & ->); reflexivity.
+  Qed.
 
   Fixpoint mymult a b :=
     match a with 
