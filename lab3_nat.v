@@ -8,16 +8,32 @@ Section plus_minus_mult.
   Reserved Notation "a ⊖ b" (at level 50, left associativity).
   Reserved Notation "a ⊗ b" (at level 40, left associativity).
 
-  Fixpoint plus (a b : nat) :=
+  (* We redefine plus as myplus denote with ⊕ to
+     avoid the conflicts with the Init module
+     that contains parts of the Arith library 
+
+     Notice that we import the inductive definition of nat
+
+   *)
+
+  Print nat.
+
+  Fixpoint myplus (a b : nat) :=
     match a with
       | 0   => b
       | S a => S (a ⊕ b)
     end
-  where "a ⊕ b" := (plus a b).
+  where "a ⊕ b" := (myplus a b).
+
+  (* 0, 1, 2 is a notation of S (S ... O) 
+     in particular, 0 is identical to O 
+   *)
 
   Fact plus_0_l n : 0 ⊕ n = n.
-  Proof.
-  Admitted.
+  Proof. reflexivity. Qed.
+
+  Fact plus_1_l n : 1 ⊕ n = S n.
+  Proof. reflexivity. Qed.
   
   Fact plus_0_r n : n ⊕ 0 = n.
   Proof.
@@ -37,13 +53,13 @@ Section plus_minus_mult.
   Proof.
   Admitted.
 
-  Fixpoint minus (a b : nat) :=
+  Fixpoint myminus (a b : nat) :=
     match a, b with
       | 0, _     => 0
       | S a, 0   => S a 
       | S a, S b => a ⊖ b
     end
-  where "a ⊖ b" := (minus a b).
+  where "a ⊖ b" := (myminus a b).
 
   Fact minus_0 a : a ⊖ 0 = a.
   Proof.
@@ -79,12 +95,12 @@ Section plus_minus_mult.
   Proof.
   Admitted.
 
-  Fixpoint mult a b :=
+  Fixpoint mymult a b :=
     match a with 
       | 0   => 0
       | S a => b ⊕ a ⊗ b
     end
-  where "a ⊗ b" := (mult a b).
+  where "a ⊗ b" := (mymult a b).
 
   Fact mult_0_l a : 0 ⊗ a = 0.
   Proof.
