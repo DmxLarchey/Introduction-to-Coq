@@ -9,6 +9,8 @@
 
 Require Import Setoid Arith.
 
+Set Implicit Arguments.
+
 Section list.
 
   Variable X : Type.
@@ -48,6 +50,42 @@ Section list.
   Admitted.
 
   Fact app_length l m : ⌊l++m⌋ = ⌊l⌋+⌊m⌋.
+  Proof.
+  Admitted.
+
+  Section map.
+
+    Variable (Y : Type) (f : X -> Y).
+
+    Fixpoint map l :=
+      match l with 
+        | nil  => nil
+        | x::l => f x::map l
+      end.
+
+    Fact map_length l : ⌊map l⌋ = ⌊l⌋.
+    Proof.
+    Admitted.
+
+    Fact map_app l m : map (l++m) = map l ++ map m.
+    Proof.
+    Admitted.
+
+  End map.
+
+  Fixpoint rev l :=
+    match l with
+      | nil  => nil
+      | x::l => rev l ++ x :: nil
+    end.
+
+  Fixpoint rev_app a l :=
+    match l with 
+      | nil  => a
+      | x::l => rev_app (x::a) l
+    end.
+
+  Fact rev_rev_app_eq a l : rev_app a l = rev l ++ a.
   Proof.
   Admitted.
 
