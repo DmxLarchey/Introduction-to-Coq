@@ -7,7 +7,7 @@
 (*         CeCILL v2 FREE SOFTWARE LICENSE AGREEMENT          *)
 (**************************************************************)
 
-Require Import Setoid Arith.
+Require Import Arith Setoid.
 
 Set Implicit Arguments.
 
@@ -35,6 +35,8 @@ Section list.
   Arguments app [A].
   Check app.
 
+  Print app.
+
   Fact app_nil_head l : nil++l = l.
   Proof. reflexivity. Qed.
 
@@ -43,15 +45,34 @@ Section list.
 
   Fact app_assoc l m p : (l++m)++p = l++m++p.
   Proof.
-  Admitted.
+   (* induction l as [ | x l IHl ].
+    + simpl. trivial.
+    + simpl.
+      f_equal.
+      trivial. *)
+    induction l; simpl; f_equal; trivial.
+  Qed.
 
   Fact app_nil_end l : l++nil = l.
   Proof.
-  Admitted.
+  (*  induction l; simpl; f_equal; trivial. *)
+    induction l as [ | x l IHl ].
+    + simpl. trivial.
+    + simpl.
+      f_equal.
+      trivial.
+  Qed.
 
   Fact app_length l m : ⌊l++m⌋ = ⌊l⌋+⌊m⌋.
   Proof.
-  Admitted.
+  (*  induction l; simpl; f_equal; trivial. *)
+    induction l as [ | x l IHl ].
+    + simpl. 
+      trivial.
+    + simpl.
+      f_equal.
+      trivial.
+  Qed.
 
   Section map.
 
@@ -65,11 +86,13 @@ Section list.
 
     Fact map_length l : ⌊map l⌋ = ⌊l⌋.
     Proof.
-    Admitted.
+      induction l; simpl; f_equal; trivial.
+    Qed.
 
     Fact map_app l m : map (l++m) = map l ++ map m.
     Proof.
-    Admitted.
+      induction l; simpl; f_equal; trivial.
+    Qed.
 
   End map.
 
@@ -87,7 +110,11 @@ Section list.
 
   Fact rev_rev_app_eq a l : rev_app a l = rev l ++ a.
   Proof.
-  Admitted.
+    revert a; induction l as [ | x l IHl ]; intros a; simpl.
+    + trivial.
+    + rewrite app_assoc; simpl.
+      apply IHl.
+  Qed.
 
   Reserved Notation "x ∈ l" (at level 70, no associativity).
 
@@ -100,7 +127,12 @@ Section list.
 
   Fact in_app_iff x l m : x ∈ l++m <-> x ∈ l \/ x ∈ m.
   Proof.
-  Admitted.
+    (* induction l as [ | y l IHl ]; simpl.
+    + tauto.
+    + rewrite IHl.
+      tauto. *)
+    induction l as [ | ? ? IHl ]; simpl; [ | rewrite IHl ]; tauto.
+  Qed.
     
   Definition incl l m := forall x, x ∈ l -> x ∈ m.
 
@@ -108,25 +140,47 @@ Section list.
 
   Fact incl_refl l : l ⊆ l.
   Proof.
-  Admitted.
+    unfold incl; auto.
+  Qed.
 
   Fact incl_trans l m p : l ⊆ m -> m ⊆ p -> l ⊆ p. 
   Proof.
-  Admitted.
+    unfold incl.
+  (*  intros H1 H2 x H3.
+    apply H2, H1, H3. *)
+    firstorder.
+  Qed.
 
   Hint Resolve incl_refl : core.
 
   Fact incl_app_l l m : l ⊆ l++m.
   Proof.
-  Admitted.
+(*    red.
+    intros x Hx.
+    apply in_app_iff.
+    left; trivial. *)
+    intro; rewrite in_app_iff; tauto.
+  Qed.
 
   Fact incl_app_r l m : m ⊆ l++m.
   Proof.
-  Admitted.
+    intro; rewrite in_app_iff; tauto.
+  Qed.
 
   Fact sg_incl x m : x::nil ⊆ m <-> x ∈ m.
   Proof.
-  Admitted.
+    unfold incl; split.
+    + intros H.
+      apply H.
+      simpl.
+      auto.
+    + (* intros H y; simpl.
+      intros D.
+      destruct D as [ E | A ].
+      * rewrite E; trivial.
+      * destruct A. *)
+      intros ? ? [ -> | [] ]; trivial.
+  Qed.
 
   Hint Resolve incl_app_l incl_app_r : core.
 
