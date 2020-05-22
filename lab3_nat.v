@@ -164,69 +164,150 @@ Section plus_minus_mult.
     end
   where "a ⊗ b" := (mymult a b).
 
-  Fact mult_0_l a : 0 ⊗ a = 0.
+  Fact mult_0_l b : 0 ⊗ b = 0.
   Proof.
-  Admitted.
+    simpl. 
+    reflexivity.
+  Qed.
 
   Fact mult_0_r a : a ⊗ 0 = 0.
   Proof.
-    induction a; simpl; f_equal; trivial.
+    induction a as [ | a IHa ].
+    + trivial.
+    + unfold mymult; fold mymult.
+      simpl myplus.
+      assumption.
+    (* induction a; simpl; f_equal; trivial. *)
   Qed.
 
-  Hint Resolve plus_comm : core.
+  Hint Resolve plus_comm mult_0_r : core.
 
   Fact mult_a_Sb a b : a ⊗ S b = a ⊕ a ⊗ b.
   Proof.
-  Admitted.
+    induction a as [ | a IHa ].
+    + trivial.
+    + simpl.
+      f_equal.
+      rewrite IHa. 
+      rewrite <- !plus_assoc.
+      f_equal.
+      trivial.
+   (*   rewrite <- plus_assoc, (plus_comm a), plus_assoc.
+      f_equal.
+      trivial. *)
+  Qed.
 
   Fact mult_comm a b : a ⊗ b = b ⊗ a.
   Proof.
-  Admitted.
+    induction a as [ | a IHa ].
+    + simpl; trivial.
+    + simpl. 
+      rewrite mult_a_Sb.
+      f_equal.
+      trivial.
+  Qed.
 
   Fact plus_mult_distr_l a b c : (a ⊕ b) ⊗ c = a ⊗ c ⊕ b ⊗ c.
   Proof.
-  Admitted.
+    induction a as [ | a IHa ]; simpl; trivial.
+    rewrite IHa, plus_assoc; trivial.
+  Qed.
 
   Hint Resolve plus_mult_distr_l : core.
 
   Fact plus_mult_distr_r a b c : c ⊗ (a ⊕ b)  = c ⊗ a ⊕ c ⊗ b.
   Proof.
-  Admitted.
+  (*  rewrite mult_comm.
+    rewrite (mult_comm c a).
+    rewrite (mult_comm c b). *)
+    rewrite !(mult_comm c).
+    trivial.
+  Qed.
 
   Fact mult_assoc a b c : a ⊗ b ⊗ c = a ⊗ (b ⊗ c).
   Proof.
-  Admitted.
+    induction a as [ | a IHa ]; simpl; trivial.
+    rewrite plus_mult_distr_l, IHa; trivial.
+    (*
+    rewrite !(mult_comm a).
+    rewrite !plus_mult_distr_l.
+    rewrite mult_comm.
+    f_equal.
+    rewrite (mult_comm b).
+    rewrite (mult_comm (c ⊗ b)).
+    *)
+  Qed.
 
   Fact mult_1_l a : 1 ⊗ a = a.
   Proof.
-  Admitted.
+    simpl; auto.
+  Qed.
 
   Hint Resolve mult_1_l : core.
 
   Fact mult_1_r a : a ⊗ 1 = a.
   Proof.
-  Admitted.
+    rewrite mult_comm; trivial.
+  Qed.
 
   Hint Resolve mult_1_r : core.
 
   Fact mult_minus a b c : a ⊗ (b ⊖ c) = a ⊗ b ⊖ a ⊗ c.
   Proof.
-  Admitted.
+    rewrite !(mult_comm a).
+    revert c; induction b as [ | b IHb ]; intros c.
+    (* NOT THIS ONE induction b as [ | b IHb ]. *)
+    + simpl; trivial.
+    + destruct c as [ | c ]; simpl.
+      * rewrite minus_0; trivial.
+      * rewrite IHb, <- minus_plus_assoc, plus_minus.
+        trivial.
+(*    induction a as [ | a IHa ].
+    + simpl; trivial.
+    + simpl.
+      rewrite IHa. ... fails possibly *)
+  Qed.
 
   Fact mult_eq_0 a b : a ⊗ b = 0 <-> a = 0 \/ b = 0.
   Proof.
-  Admitted.
+    split.
+    + revert a b; intros [] []; simpl; auto; discriminate.
+   (*  destruct b as [ | b ].
+      * auto.
+      * destruct a as [ | a ]; auto.
+        simpl; discriminate. *)
+    + intros []; subst; auto.
+      (* intros [ -> | -> ]; auto. *)
+  Qed.
 
-  Fact mult_reg0 a b c : a ⊗ b = a ⊗ c -> a = 0 \/ b = c.
+  Fact mult_cancel_0 a b c : a ⊗ b = a ⊗ c -> a = 0 \/ b = c.
   Proof.
-  Admitted.
+    intros E.
+    rewrite minus_eq in E.
+    rewrite <- !mult_minus in E.
+    rewrite !mult_eq_0 in E.
+    rewrite (minus_eq b c).
+    destruct E as [ [] [] ]; auto.
+  Qed.
 
-  Fact mult_reg_l a b c : S a ⊗ b = S a ⊗ c -> b = c.
+  Fact mult_cancel_l a b c : S a ⊗ b = S a ⊗ c -> b = c.
   Proof.
-  Admitted.
+    intros E.
+    apply mult_cancel_0 in E.
+    destruct E; trivial.
+    discriminate.
+  Qed.
 
-  Fact mult_reg_r a b c : a ⊗ S c = b ⊗ S c -> a = b.
+  Fact mult_cancel_r a b c : a ⊗ S c = b ⊗ S c -> a = b.
   Proof.
-  Admitted.
+    rewrite !(mult_comm _ (S _)).
+    apply mult_cancel_l.
+  Qed.
 
 End plus_minus_mult.
+
+Require Import Arith Lia Ring Omega. (* In day to day practice with nat, Z *)
+
+Fact test (a b c : nat) : a <= b -> a+b <= b*3.
+Proof. omega. Qed.
+
