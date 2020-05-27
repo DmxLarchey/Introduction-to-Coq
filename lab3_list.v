@@ -186,29 +186,56 @@ Section list.
 
   Fact app_incl_left l r m : l++r ⊆ m <-> l ⊆ m /\ r ⊆ m.
   Proof.
-  Admitted.
+    split.
+    + intros H.
+      split; apply incl_trans with (2 := H); trivial.
+    + intros [ H1 H2 ] x.
+      rewrite in_app_iff.
+      intros [ H | H ]; revert H.
+      * auto.
+      * auto.
+  Qed.
 
   Fact cons_incl_left x l m : x::l ⊆ m <-> x ∈ m /\ l ⊆ m.
   Proof.
-  Admitted.
+    rewrite <- sg_incl, <- app_incl_left.
+    simpl; tauto.
+  Qed.
 
   Fact incl_cons_r x l : l ⊆ x::l.
   Proof.
-  Admitted.
+    unfold incl; simpl; auto.
+  Qed.
 
   Fact incl_nil_l l : nil ⊆ l.
   Proof.
-  Admitted.
+    (* unfold incl. 
+    simpl. *)
+    intros _ [].
+  Qed.
 
   Hint Resolve incl_nil_l incl_cons_r : core.
 
   Fact incl_nil_r l : l ⊆ nil <-> l = nil.
   Proof.
-  Admitted.
+    split.
+    + unfold incl.
+      simpl.
+      intros H.
+      destruct l as [ | x l ]. 
+      * trivial.
+      * destruct H with x.
+        simpl; auto.
+    + intros ->. (* equiv intros E; rewrite -> E *)
+      auto. (* apply incl_refl. *)
+  Qed.
 
   Fact incl_app_comm l m : l++m ⊆ m++l.
   Proof.
-  Admitted.
+    intro.
+    rewrite !in_app_iff.
+    tauto.
+  Qed.
 
   (* Alternative inductive definitions of In/∈ and incl/⊆ *)
 
@@ -219,9 +246,25 @@ Section list.
     | in_ind_In1 : forall x y l, x ∈' l -> x ∈' y::l
   where "x ∈' l" := (ind_In x l).
 
+  (**                         x ∈' l
+          -------------   ---------------   
+            x ∈' x::l        x ∈' y::l     *)
+
   Fact ind_In_equiv x l : x ∈ l <-> x ∈' l.
   Proof.
-  Admitted.
+    split.
+    + induction l as [ | y l IHl ]; simpl.
+      * intros [].
+      * intros [ -> | ]; constructor; auto.
+    (*    - constructor.
+        - constructor 2.
+          apply IHl, H. *)
+    + intros H.
+      Check  ind_In_ind.
+      induction H as [ x l | x y l H IH ].
+      * left; reflexivity.
+      * right; assumption.
+  Qed.
 
   Reserved Notation "x ⊆' y" (at level 70, no associativity).
 
@@ -230,9 +273,29 @@ Section list.
     | in_ii1 : forall x l m, x ∈' m -> l ⊆' m -> x::l ⊆' m 
   where "l ⊆' m" := (ind_incl l m).
 
+  (**                             x ∈' m     l ⊆' m
+            -------------      ------------------------
+               nil ⊆' m                x::l ⊆' m    *)
+
   Fact ind_incl_equiv l m : l ⊆ m <-> l ⊆' m.
   Proof.
-  Admitted.
+    split.
+    + intros H.
+      induction l as [ | x l IHl ].
+      * constructor.
+      * constructor.
+        - apply ind_In_equiv.
+          apply H.
+          simpl; auto.
+        - apply IHl.
+          rewrite cons_incl_left in H.
+          tauto.
+    + intros H.
+      induction H as [ m | x l m H1 H2 IH2 ].
+      * auto.
+      * rewrite cons_incl_left, ind_In_equiv.
+        auto.
+  Qed.
 
 End list.
   
