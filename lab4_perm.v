@@ -382,7 +382,12 @@ Section perm.
 
   Lemma perm_eq_equiv x y : x = y <-> x::nil ~p y::nil.
   Proof.
-  Admitted.
+    split.
+    + now intros <-. (* equivalent to intros <-; easy *)
+    + intros H.
+      apply perm_sg_inv in H.
+      now inversion H.
+  Qed.
 
   Section perm_dec.
 
@@ -397,7 +402,20 @@ Section perm.
 
     Lemma in_split_dec (x : X) m : { m1 : _ & { m2 | m = m1++x::m2 } } + { ~ In x m }.
     Proof.
-    Admitted.
+      induction m as [ | y m IHm ].
+      + right.
+        simpl.
+        intros [].
+      + destruct (Xdec y x) as [ H | H ].
+        * subst y.
+          left.
+          exists nil, m; simpl; trivial.
+        * destruct IHm as [ (m1 & m2 & E) | C ].
+          - subst m.
+            left.
+            exists (y::m1), m2; simpl; trivial.
+          - right; simpl; tauto.
+    Qed.
 
     (** permutations are decidable if identity is decidable *)
 
@@ -408,10 +426,25 @@ Section perm.
     Proof.
       revert m; induction l as [ | x l IHl ]; intros m.
       + destruct m as [ | y m ].
-        1-2: admit.
+        * now left.
+        * right.
+          intros H.
+          apply perm_sym, perm_nil_inv in H.
+          discriminate.
       + destruct (in_split_dec x m) as [ (m1 & m2 & ->) | C ].
-        1-2: admit.
-    Admitted.
+        * destruct IHl with (m := m1++m2) as [ H | H ].
+          - left.
+            apply perm_trans with (2 := perm_middle _ _ _).
+            now apply perm_skip.
+          - right.
+            contradict H.
+            apply perm_cons_inv with x.
+            apply perm_trans with (1 := H), perm_sym, perm_middle.
+        * right.
+          contradict C.
+          apply perm_incl with (1 := C).
+          simpl; auto.
+    Qed.
 
   End perm_dec.
 
@@ -422,7 +455,22 @@ Section perm.
   Theorem dec_perm : (forall l m, { l ~p m } + { ~ l ~p m })
                   -> (forall x y : X, { x = y } + { x <> y }).
   Proof.
-  Admitted.
+    intros Pdec x y.
+    destruct (Pdec (x::nil) (y::nil)); [ left | right ];
+      now rewrite perm_eq_equiv.
+  Qed.
+
+  Check perm_dec.
+
+(*
+
+End perm.
+
+Require Import Extraction.
+
+Recursive Extraction perm_dec.
+
+*)
 
   Section alternate_1.
 
@@ -440,59 +488,114 @@ Section perm.
 
     Lemma perm'_refl l : l ~' l.
     Proof.
-    Admitted.
+      destruct l as [ | x [ | y l ] ].
+      + constructor.
+      + constructor.
+      + apply perm'_trans with (1 := perm'_swap nil _ _ _).
+        apply (perm'_swap nil).
+    Qed.
 
     (* hint: induction on l ~' m *)
 
     Lemma perm'_skip x l m : l ~' m -> x::l ~' x::m.
     Proof.
-    Admitted.
+      induction 1 as [ | | | ? ? ? ? IH1 ].
+      + apply perm'_refl.
+      + apply perm'_refl.
+      + constructor 3 with (l := _::_).
+      + now constructor 4 with (1 := IH1).
+    Qed.
 
     (** the two definitions of permutations are equivalent *)
 
     (* hint: "split" and two inductions on the permutation predicate *)
 
+    Hint Constructors perm' : core.
+    Hint Resolve perm'_refl perm'_skip : core.
+
     Lemma perm_perm'_eq l m : l ~p m <-> l ~' m.
     Proof.
-    Admitted.
+      split.
+      + induction 1 as [ | x l m | x y l | l m p H1 IH1 H2 IH2 ]; auto.
+        * apply perm'_swap with (l := nil).
+        * apply perm'_trans with m; auto.
+      + induction 1 as [ | x | l x y m | l m p H1 IH1 H2 IH2 ]; auto.
+        apply perm_trans with m; auto.
+    Qed.
 
   End alternate_1.
 
   Section alternate_2.
 
-    Fixpoint perm'' (l m : list X) :=
+    Fixpoint permf (l m : list X) :=
       match l with
         | nil  => m = nil
         | x::l => exists a b, m = a++x::b /\ l ~' a++b
       end
-    where "l ~' m" := (perm'' l m).
+    where "l ~' m" := (permf l m).
 
-    Lemma perm''_nil : nil ~' nil.
-    Proof. Admitted.
+    Lemma permf_nil : nil ~' nil.
+    Proof.
+      now simpl.
+    Qed.
 
-    Lemma perm''_skip x l m : l ~' m -> x::l ~' x::m.
-    Proof. Admitted.
+    Lemma permf_skip x l m : l ~' m -> x::l ~' x::m.
+    Proof.
+      intros H.
+      simpl.
+      exists nil, m; simpl; auto.
+    Qed.
 
-    Hint Resolve perm''_nil perm''_skip : core.
+    Hint Resolve permf_nil permf_skip : core.
 
-    Lemma perm''_refl l : l ~' l.
-    Proof. Admitted.
+    Lemma permf_refl l : l ~' l.
+    Proof.
+      induction l; auto.
+      (* induction l.
+      + apply permf_nil.
+      + apply permf_skip; assumption. *)
+    Qed.
 
-    Hint Resolve perm''_refl : core.
+    Hint Resolve permf_refl : core.
 
-    Lemma perm''_swap x y l : x::y::l ~' y::x::l.
-    Proof. Admitted.
+    Lemma permf_swap x y l : x::y::l ~' y::x::l.
+    Proof.
+      simpl.
+      exists (y::nil), l; simpl.
+      split; auto.
+      exists nil, l; simpl; auto.
+    Qed.
 
-    Hint Resolve perm''_swap : core.
+    Hint Resolve permf_swap : core.
 
-    Lemma perm''_middle l x r m : l++x::r ~' m <-> exists a b, m = a++x::b /\ l++r ~' a++b.
-    Proof. (* this one is more difficult, needed for perm''_trans below *) Admitted.
+    Lemma permf_middle l x r m : 
+        l++x::r ~' m <-> exists a b, m = a++x::b /\ l++r ~' a++b.
+    Proof. 
+       (* this one is more difficult, needed for permf_trans below *) 
+       (** hints: induction on l after generalizing m, and use app_split *)
+    Admitted.
 
-    Lemma perm''_trans l m k : l ~' m -> m ~' k -> l ~' k.
-    Proof. Admitted.
+    Lemma permf_trans l m k : l ~' m -> m ~' k -> l ~' k.
+    Proof.
+      revert m k; induction l as [ | x l IHl ]; intros m k; simpl.
+      + intros -> ->; trivial.
+      + intros (a & b & -> & H1).
+        rewrite permf_middle.
+        intros (a' & b' & -> & H2).
+        exists a', b'; split; auto.
+        revert H1 H2; apply IHl.
+    Qed.
 
-    Theorem perm_eq_perm'' l m : l ~p m <-> l ~' m.
-    Proof. Admitted.
+    Theorem perm_eq_permf l m : l ~p m <-> l ~' m.
+    Proof.
+      split.
+      + induction 1 as [ | | | l m ]; auto.
+        apply permf_trans with m; auto.
+      + revert m; induction l as [ | x l IHl ]; intros m; simpl.
+        * intros ->; auto.
+        * intros (a & b & -> & H).
+          apply perm_trans with (2 := perm_middle _ _ _); auto.
+    Qed.
   
   End alternate_2.
 
