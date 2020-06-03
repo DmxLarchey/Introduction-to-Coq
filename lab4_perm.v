@@ -424,34 +424,76 @@ Section perm.
   Proof.
   Admitted.
 
-  (** An alternate definition of permutations by transitive closure
-      of transpositions, we show the equivalence *)
+  Section alternate_1.
 
-  Inductive perm' : list X -> list X -> Prop :=
-    | perm'_nil   : nil ~' nil                                (* void list *)
-    | perm'_sg    : forall x, x::nil ~' x::nil                (* singleton list *)
-    | perm'_swap  : forall l x y r, l++x::y::r ~' l++y::x::r  (* transposition *)
-    | perm'_trans : forall l m k, l ~' m -> m ~' k -> l ~' k  (* transitivity *)
-  where "l ~' m" := (perm' l m).
+    (** An alternate definition of permutations by transitive closure
+        of transpositions, we show the equivalence *)
 
-  (* hints: case analysis on l and transitivity for l = _::_::_ *) 
+    Inductive perm' : list X -> list X -> Prop :=
+      | perm'_nil   : nil ~' nil                                (* void list *)
+      | perm'_sg    : forall x, x::nil ~' x::nil                (* singleton list *)
+      | perm'_swap  : forall l x y r, l++x::y::r ~' l++y::x::r  (* transposition *)
+      | perm'_trans : forall l m k, l ~' m -> m ~' k -> l ~' k  (* transitivity *)
+    where "l ~' m" := (perm' l m).
 
-  Lemma perm'_refl l : l ~' l.
-  Proof.
-  Admitted.
+     (* hints: case analysis on l and transitivity for l = _::_::_ *) 
 
-  (* hint: induction on l ~' m *)
+    Lemma perm'_refl l : l ~' l.
+    Proof.
+    Admitted.
 
-  Lemma perm'_skip x l m : l ~' m -> x::l ~' x::m.
-  Proof.
-  Admitted.
+    (* hint: induction on l ~' m *)
 
-  (** the two definitions of permutations are equivalent *)
+    Lemma perm'_skip x l m : l ~' m -> x::l ~' x::m.
+    Proof.
+    Admitted.
 
-  (* hint: "split" and two inductions on the permutation predicate *)
+    (** the two definitions of permutations are equivalent *)
 
-  Lemma perm_perm'_eq l m : l ~p m <-> l ~' m.
-  Proof.
-  Admitted.
+    (* hint: "split" and two inductions on the permutation predicate *)
+
+    Lemma perm_perm'_eq l m : l ~p m <-> l ~' m.
+    Proof.
+    Admitted.
+
+  End alternate_1.
+
+  Section alternate_2.
+
+    Fixpoint perm'' (l m : list X) :=
+      match l with
+        | nil  => m = nil
+        | x::l => exists a b, m = a++x::b /\ l ~' a++b
+      end
+    where "l ~' m" := (perm'' l m).
+
+    Lemma perm''_nil : nil ~' nil.
+    Proof. Admitted.
+
+    Lemma perm''_skip x l m : l ~' m -> x::l ~' x::m.
+    Proof. Admitted.
+
+    Hint Resolve perm''_nil perm''_skip : core.
+
+    Lemma perm''_refl l : l ~' l.
+    Proof. Admitted.
+
+    Hint Resolve perm''_refl : core.
+
+    Lemma perm''_swap x y l : x::y::l ~' y::x::l.
+    Proof. Admitted.
+
+    Hint Resolve perm''_swap : core.
+
+    Lemma perm''_middle l x r m : l++x::r ~' m <-> exists a b, m = a++x::b /\ l++r ~' a++b.
+    Proof. (* this one is more difficult, needed for perm''_trans below *) Admitted.
+
+    Lemma perm''_trans l m k : l ~' m -> m ~' k -> l ~' k.
+    Proof. Admitted.
+
+    Theorem perm_eq_perm'' l m : l ~p m <-> l ~' m.
+    Proof. Admitted.
+  
+  End alternate_2.
 
 End perm.
