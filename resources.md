@@ -1,28 +1,18 @@
 # Resource for Students in the upcoming Coq lessons
 
-- The first course will take place as scheduled:
-  * Tuesday May 5, 2020, 13:00-15:00
-
-- Before that, I will need to collect the e-mail
-  of all the students to be able to contact them
-  directly.
-
-- Due to the move of the lessons fully virtual, we will
-  try to focus on what is most interactive,
-  ie the lab sessions.
+- The course will take place as scheduled:
+  * Monday March 8, 2021, 10:00-12:00
+  * Monday March 15, 2021, 08:00-10:00
+  * Monday March 22, 2021, 08:00-12:00 (Lab session, Salle Atelis HP 303/309)
+  * Monday April 12, 2021, 08:00-12:00 (Lab session, Salle Atelis HP 303/309)
 
 - Following the lessons:
   * a computer (a smartphone/tablet won't work)
   * a microphone and headphones (mandatory)
   * camera is a plus
-  * the Discord app: discordapp.com
-    - free of charge, allows screen sharing
-    - works in a navigator (tested on Chrome)
-    - standalone apps for Linux, Windows & IOS
-  - need to register a (free) account on discordapp.com
-  - the account of the teacher is: **Dominique Larchey-Wendling#0283**
-
-- For lab. sessions, the students need to install
+  * Microsoft Teams [Canal PDA](https://teams.microsoft.com/l/channel/19%3adcfd8f824114416d8890ac7deebc5d66%40thread.tacv2/Preuves%2520et%2520D%25C3%25A9duction%2520Automatique?groupId=61159ddd-bead-44f7-aaf6-69e253427128&tenantId=158716cf-46b9-48ca-8c49-c7bb67e575f3)
+ 
+- For lab. sessions, the students may install
   `Coq` and `CoqIDE` on their own computer
   - no need to get the latest version (`v8.11`)
   - anything above `Coq 8.8` (3 years old) will work
@@ -33,6 +23,9 @@
     3. or install it through `opam 2` (for experts)
   - installing `Coq` for Windows or Mac users:
     - there are [packages in here](https://github.com/coq/coq/releases/tag/V8.11.0)
+
+- `Coq` and `CoqIDE` should also be available
+  on the Linux machines in the "Salle Atelis HP 303/309"
 
 - For support material:
   - recommended reads:
