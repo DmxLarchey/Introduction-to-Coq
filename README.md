@@ -27,7 +27,8 @@ the well know recursive Hanoi sequence of moves is a correct.
 
 ## Teaching methods
 
-Due to the Covid-19 infection, the course and lab sessions will be given online
+Due to the Covid-19 infection, the course will be given online but labs sessions will take place
+live (hopefully) in *Salle Atelis HP 303/309*.
 
 ### To follow the lessons students need:
 
