@@ -25,9 +25,9 @@ The proof sketch will lead you to the goal.
 
 ## Expectations and Timetable
 
-The project starts May 20th 2020 and lasts one month. It is an 
+The project starts March 23th 2021 and lasts one month. It is an 
 **individual project** and students will be required to send a 
 completed project file to me [Dominique Larchey-Wendling](mailto:larchey@loria.fr) 
-after that one month period has expired. The deadline is fixed 
-on **June 22th 2020**. Please contact me if you have any question
+after that one month period has expired. The deadline will be fixed 
+later on be arround **mid May 2021**. Please contact me if you have any question
 or difficulty regarding the project.

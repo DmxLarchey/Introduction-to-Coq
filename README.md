@@ -1,5 +1,7 @@
 # Introduction to the Coq proof assistant
-[TUWEL online course](https://tiss.tuwien.ac.at/course/courseDetails.xhtml?dswid=3076&dsrid=195&courseNr=192098&semester=2020S)  and the [Discord server](https://discord.gg/DEJ8Ce) or contact me on Discord: **Dominique Larchey-Wendling#0283**
+
+_Preuve et Déduction Automatique (Coq)_ partly online via the Teams [PDA canal](https://teams.microsoft.com/l/channel/19%3adcfd8f824114416d8890ac7deebc5d66%40thread.tacv2/Preuves%2520et%2520D%25C3%25A9duction%2520Automatique?groupId=61159ddd-bead-44f7-aaf6-69e253427128&tenantId=158716cf-46b9-48ca-8c49-c7bb67e575f3).
+You can also contact me via e-mail at the address `dominique.larchey-wendling@loria.fr`
 
 Have a look at the herein [resource file](resources.md) for general information about `Coq` incl. installation instructions.
 
@@ -37,15 +39,7 @@ Due to the Covid-19 infection, the course and lab sessions will be given online
 - camera is a plus
   * but we will certainly not use it much to save bandwith
 
-- the [Discord app](https://discordapp.com):
-  * free of charge, allows screen sharing
-  * works in a navigator (tested with Chrome)
-  * standalone apps for Linux, Windows & IOS
-- need to register a (free) account on [discordapp.com](https://discordapp.com)
-- the account of the teacher is: **Dominique Larchey-Wendling#0283**
-- the Discord server: [**Introduction to Coq**](https://discord.gg/PgFSYE)
-
-### For lab. sessions, the students need to install `Coq` and `CoqIde` on their own computer
+### For lab. sessions, the students need to install `Coq` and `CoqIde` on their working computer
 - no need to get the latest version (`v8.11`)
 - anything above `Coq 8.8` (over 3 years old) will work
 - the Coq main site: https://coq.inria.fr
