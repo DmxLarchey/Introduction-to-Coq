@@ -1,15 +1,20 @@
 Section C2_1.
 
-  Variables (A : Type) (R : A -> A -> Prop) (f : A -> A) (a : A).
+  Parameter (A : Type) (R : A -> A -> Prop) (f : A -> A) (a : A).
 
   Hypothesis Hf : forall x y, R x y -> R x (f y).
   Hypothesis R_refl : forall x, R x x.
 
+  (* Variables x : A. *)
+
   Lemma Lf : forall x, R x (f (f (f x))).
   Proof.
-    intros x.
-    do 3 apply Hf.
-    trivial.
+(*    intro x.
+    apply Hf.
+    apply Hf.
+    apply Hf.
+    apply R_refl. *)
+    intro; repeat apply Hf; apply R_refl.
   Qed.
 
 End C2_1.
@@ -24,8 +29,8 @@ Section C2_2.
   Lemma lt_n_SSn : forall i, i < S (S i).
   Proof.
     intro i.
-  (*  apply lt_trans with (1 := lt_n_Sn _), lt_n_Sn. *)
-    apply lt_trans with (S i); apply lt_n_Sn.
+    do 1 apply lt_trans with (2 := lt_n_Sn _). 
+    apply lt_n_Sn.
   Qed.
 
   Lemma greater : forall n, exists p, n < p.
@@ -43,19 +48,19 @@ Section C2_2.
   
     Lemma absurd : False.
     Proof.
-      destruct H as [ x Hx ].
-      apply (lt_irrefl x).
-      apply Hx.
+      destruct H as [ m Hm ].
+      apply (lt_irrefl m).
+      apply Hm.
     Qed.
 
   End absurd.
 
-  Lemma L36 : 9 * 3 = 3 * 9.
+  Lemma L36 : 9 * 4 = 3 * 12.
   Proof.
     reflexivity.
   Qed.
 
-  Variable A : Type.
+  Variable (A : Type).
 
   Lemma eq_trans_on_A (x y z : A) : x = y -> y = z -> x = z.
   Proof.
@@ -93,31 +98,29 @@ Section C2_3.
 
 End C2_3.
 
-Require Import Omega.
+Require Import Omega Lia.
 
 Lemma L' : forall n, n < 2 -> n = 0 \/ n = 1.
 Proof.
-  intros; omega.
+  intros; lia.
 Qed.
 
 Lemma L2 : forall i, i < 2 -> i*i = i.
 Proof.
   intros i H.
-  destruct L' with (1 := H); subst i; reflexivity.
+  destruct L' with (1 := H); subst i; trivial.
 Qed.
 
 Lemma or_comm : forall P Q : Prop, P \/ Q -> Q \/ P.
 Proof.
-  intros P Q.
-  intros [].
-  + right; trivial.
-  + left; trivial.
+  intros ? ? []; [ right | left ]; assumption.
 Qed.
 
-Lemma not_ex_all_not (A : Type) (P : A -> Prop) :
+Lemma not_ex_all_not : forall (A : Type) (P : A -> Prop),
   (~ exists a:A, P a) -> forall a, ~ P a.
 Proof.
-  intros H a H1.
+  intros A P H a H1.
+  unfold not in *.
   apply H.
   exists a.
   trivial.
@@ -132,9 +135,24 @@ Qed.
   
 Lemma test_students : exists P : nat -> Prop, P 0 /\ ~ P 1.
 Proof.
-  exists (fun x : nat => 0 = x).
-  split; [ trivial | discriminate ].
+ (*  exists (fun x => x < 1); lia. *)
+
+  exists (fun x : nat => 0 = x); lia.
+ (* split.
+  + reflexivity.
+  + discriminate. *)
 Qed.
+
+Fixpoint factorial n :=
+  match n with
+    | 0 => 1
+    | S n => (S n) * factorial n
+  end.
+
+Lemma factorial_prop n : forall p, 0 < p <= n -> exists q, factorial n = q * p.
+Proof.
+  induction n as [ | n IHn ].
+Admitted. 
 
 Lemma exf : exists f : nat -> nat,
   forall n p, 0 < p -> p <= n -> exists q, f n = q * p.
