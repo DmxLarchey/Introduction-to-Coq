@@ -24,8 +24,14 @@ Qed.
 
 Lemma triple_neg : forall P:Prop, ~ ~ ~ P -> ~ P.
 Proof.
-  unfold not.
-  apply (fun P => P3Q P False). 
+(*  intros P nnnp p.
+  apply nnnp.
+  intros np.
+  apply np, p. *)
+  intros P.
+ (* unfold not.
+  apply P3Q. *)
+  exact (P3Q P False).
 Qed.
 
 (* try the contradict tactic *)
@@ -52,7 +58,7 @@ Section not_or_1_example.
     apply H.
     + left.
       trivial.
-    + trivial.
+    + reflexivity.
   Qed.
 
 End not_or_1_example.
@@ -80,16 +86,11 @@ Check de_morgan_2.
 
 Lemma all_perm (A : Type) (P : A -> A -> Prop) :
    (forall x y:A, P x y) -> 
-   forall x y:A, P y x.
+   forall y x:A, P x y.
 Proof.
   intros H1 x y.
-  (* exact (H1 y x). *)
-  (* exact (H1 _ _). *)
-  (* trivial *)
   apply H1.
 Qed.
-
-Check all_perm.
 
 Lemma resolution :
  forall (A:Type) (P Q R S:A -> Prop),
@@ -98,10 +99,14 @@ Lemma resolution :
    forall c:A, P c -> R c -> S c.
 Proof.
   intros A P Q R S H1 H2 c H3 H4.
+  apply H1.
+  + apply H2, H3.
+  + trivial.
 (*  apply H1.
   + apply H2; trivial.
   + trivial. *)
-  apply H1; [ apply H2 | ]; trivial.
+(*
+  apply H1; [ apply H2 | ]; trivial. *)
 Qed.
 
 Print resolution.
@@ -116,12 +121,14 @@ Lemma not_ex_forall_not A (P: A -> Prop) :
 Proof.
   split.
   + intros H1 a H2.
+    unfold not in *.
     apply H1.
-    exists a; trivial. (* firstorder. *)
-  + intros H1 (x & Hx).
-    (* apply (H1 x). *)
-    (* apply H1 with x. *)
-    apply H1 with (1 := Hx).
+    exists a.
+    trivial. (* firstorder. *)
+  + intros H1 H2.
+    destruct H2 as (a & Ha).
+    apply (H1 _ Ha).
+ (*   apply H1 with (1 := Ha). *)
 Qed.
 
 Lemma ex_not_forall_not : forall (A: Type) (P: A -> Prop),
@@ -138,10 +145,10 @@ Lemma diff_sym : forall (A:Type) (a b : A),
    a <> b -> b <> a.
 Proof.
   intros A a b D.
-  (* unfold not in *. *)
+  unfold not in *.
   intros E.
   apply D.
-  rewrite (* <- *) E; reflexivity.
+  rewrite <- E; reflexivity.
   (* symmetry; trivial. *)
 Qed.
 
@@ -153,12 +160,12 @@ Lemma fun_diff :  forall (A B:Type) (f : A -> B) (a b : A),
                        f a <> f b -> a <> b.
 Proof.
   intros A B f a b.
-(*  intros D E.
-  apply D.
-  rewrite E.
-  trivial. *)
-  (* intros D <-; apply D; trivial. *)
-  intros D; contradict D. f_equal; trivial.
+  intros H E.
+  unfold not in *.
+  apply H.
+  (* rewrite E; reflexivity. *)
+  (* f_equal; exact E. *)
+  subst a; trivial.
 Qed.
 
 (**  this exercise deals with five equivalent characterizations of 
@@ -306,13 +313,14 @@ Arguments surjective [U V].
 
 Print compose.
 Print Implicit injective.
+Print Implicit compose.
 
 (** use eg "f_equal" or "rewrite" *)
 
-Infix "o" := compose (at level 61, left associativity).
+Infix "∘" := compose (at level 61, left associativity).
 
 Lemma injective_comp U V W (f:U->V) (g : V -> W) :
-     injective (g o f) -> injective f.
+     injective (g ∘ f) -> injective f.
 Proof.
  (* unfold injective, compose. *)
   intros I x y E.
@@ -328,14 +336,19 @@ Lemma surjective_comp U V W f g :
 Proof.
   intros Hgf x.
   destruct (Hgf x) as (u & Hu).
-  unfold compose in *.
+  unfold compose in Hu.
   exists (f u); trivial.
 Qed.
 
 Lemma comp_injective : forall U V W (f:U->V)(g : V -> W),
-   injective f -> injective g -> injective (g o f).
+   injective f -> injective g -> injective (g ∘ f).
 Proof.
   intros U V W f g Hf Hg x y E.
+  unfold compose in E.
+  unfold injective in *.
+  (* apply Hg in E.
+  apply Hf in E.
+  trivial. *)
   (* apply Hf, Hg, E. *)
   apply Hg, Hf in E; trivial.
 Qed.
@@ -347,7 +360,7 @@ Section iterate.
   Fixpoint iterate (n:nat) {struct n} : U -> U :=
     match n with 
       | 0   => fun a => a
-      | S p => f o (iterate p)
+      | S p => f ∘ (iterate p)
     end.
 
   Hypothesis Hf : injective f.
