@@ -11,6 +11,15 @@ Require Import Arith Setoid.
 
 Set Implicit Arguments.
 
+(*
+Inductive bt :=
+  | leaf : bt
+  | node : bt -> bt -> bt.
+
+Check bt_rect.
+Check bt_ind.
+*)
+
 Section list.
 
   Variable X : Type.
@@ -18,14 +27,14 @@ Section list.
   Implicit Type l : list X.
 
   Infix "::" := cons.
-  Infix "++" := app.
+  Infix "++" := (@app _).
   Notation "⌊ l ⌋" := (length l) (at level 1, format "⌊ l ⌋").
 
   Print list.
   
-  Print nil.
+  Print Implicit nil.
   Check nil.
-  Check @nil.
+  Check @nil _.
   
   Print app.
 
@@ -45,12 +54,12 @@ Section list.
 
   Fact app_assoc l m p : (l++m)++p = l++m++p.
   Proof.
-   (* induction l as [ | x l IHl ].
+    induction l as [ | x l IHl ].
     + simpl. trivial.
     + simpl.
       f_equal.
-      trivial. *)
-    induction l; simpl; f_equal; trivial.
+      trivial.
+    (* induction l; simpl; f_equal; trivial. *)
   Qed.
 
   Fact app_nil_end l : l++nil = l.
@@ -62,6 +71,8 @@ Section list.
       f_equal.
       trivial.
   Qed.
+
+  Print length.
 
   Fact app_length l m : ⌊l++m⌋ = ⌊l⌋+⌊m⌋.
   Proof.
@@ -96,6 +107,8 @@ Section list.
 
   End map.
 
+  Check map.
+
   Fixpoint rev l :=
     match l with
       | nil  => nil
@@ -108,13 +121,19 @@ Section list.
       | x::l => rev_app (x::a) l
     end.
 
+  Print rev_app.
+
   Fact rev_rev_app_eq a l : rev_app a l = rev l ++ a.
   Proof.
-    revert a; induction l as [ | x l IHl ]; intros a; simpl.
+    revert a. 
+    induction l as [ | x l IHl ]; intros a; simpl.
     + trivial.
     + rewrite app_assoc; simpl.
       apply IHl.
   Qed.
+
+  Fact rev_app_equiv l : rev_app nil l = rev l.
+  Proof. rewrite rev_rev_app_eq, app_nil_end; trivial. Qed.
 
   Reserved Notation "x ∈ l" (at level 70, no associativity).
 
@@ -127,12 +146,20 @@ Section list.
 
   Fact in_app_iff x l m : x ∈ l++m <-> x ∈ l \/ x ∈ m.
   Proof.
-    (* induction l as [ | y l IHl ]; simpl.
+(*    Print list.
+    Check list_rect.
+    Check list_ind. *)
+    induction l as [ | y l IHl ]; simpl.
     + tauto.
     + rewrite IHl.
-      tauto. *)
-    induction l as [ | ? ? IHl ]; simpl; [ | rewrite IHl ]; tauto.
+      tauto.
+  (*  induction l as [ | ? ? IHl ]; simpl; [ | rewrite IHl ]; tauto. *)
   Qed.
+
+(*
+End list.
+
+Eval compute in In 2 (2::3::4::nil). *)
     
   Definition incl l m := forall x, x ∈ l -> x ∈ m.
 
@@ -140,7 +167,7 @@ Section list.
 
   Fact incl_refl l : l ⊆ l.
   Proof.
-    unfold incl; auto.
+    unfold incl. auto.
   Qed.
 
   Fact incl_trans l m p : l ⊆ m -> m ⊆ p -> l ⊆ p. 
@@ -159,7 +186,10 @@ Section list.
     intros x Hx.
     apply in_app_iff.
     left; trivial. *)
-    intro; rewrite in_app_iff; tauto.
+    intro.
+    Check in_app_iff. (* rewrite with <-> instead of = *)
+    rewrite in_app_iff. 
+    tauto.
   Qed.
 
   Fact incl_app_r l m : m ⊆ l++m.
@@ -174,12 +204,13 @@ Section list.
       apply H.
       simpl.
       auto.
-    + (* intros H y; simpl.
+    + intros H y; simpl.
       intros D.
       destruct D as [ E | A ].
-      * rewrite E; trivial.
-      * destruct A. *)
-      intros ? ? [ -> | [] ]; trivial.
+      * rewrite E. 
+        trivial.
+      * destruct A.
+      (* intros ? ? [ -> | [] ]; trivial. *)
   Qed.
 
   Hint Resolve incl_app_l incl_app_r : core.
@@ -188,7 +219,12 @@ Section list.
   Proof.
     split.
     + intros H.
-      split; apply incl_trans with (2 := H); trivial.
+      split. 
+      * Check incl_trans.
+     (*   apply incl_trans with (l++r). *)
+        apply incl_trans with (2 := H). 
+        trivial.
+      * apply incl_trans with (2 := H); trivial.
     + intros [ H1 H2 ] x.
       rewrite in_app_iff.
       intros [ H | H ]; revert H.
@@ -255,15 +291,16 @@ Section list.
     split.
     + induction l as [ | y l IHl ]; simpl.
       * intros [].
-      * intros [ -> | ]; constructor; auto.
-    (*    - constructor.
+      * (* intros [ -> | ]; constructor; auto. *)
+        intros [ E | H ].
+        - rewrite E.
+          constructor 1. (* apply in_ind_In0. *)
         - constructor 2.
-          apply IHl, H. *)
+          apply IHl, H.
     + intros H.
-      Check  ind_In_ind.
       induction H as [ x l | x y l H IH ].
-      * left; reflexivity.
-      * right; assumption.
+      * simpl. auto.
+      * simpl. auto.
   Qed.
 
   Reserved Notation "x ⊆' y" (at level 70, no associativity).
