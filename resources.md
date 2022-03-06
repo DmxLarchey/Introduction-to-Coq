@@ -1,21 +1,15 @@
 # Resource for Students in the upcoming Coq lessons
 
 - The course will take place as scheduled:
-  * Monday March 8, 2021, 10:00-12:00
-  * Monday March 15, 2021, 08:00-10:00
-  * Monday March 22, 2021, 08:00-12:00 (Lab session, Salle Atelis HP 303/309)
-  * Monday April 12, 2021, 08:00-12:00 (Lab session, Salle Atelis HP 303/309)
+  * Monday March 7, 2022, 8:00-10:00 and 10:15-12:15 (Course, HP E34)
+  * Monday March 14, 2022, 08:00-10:00 (Lab session, Salle Atelis HP 319)
+  * Monday March 21, 2022, 08:00-12:00 (Lab session, Salle Atelis HP 303)
+  * Monday April 4, 2022, 08:00-10:00 and 10:15-12:15 (Course then Lab session, Salle Atelis HP 303)
 
-- Following the lessons:
-  * a computer (a smartphone/tablet won't work)
-  * a microphone and headphones (mandatory)
-  * camera is a plus
-  * Microsoft Teams [Canal PDA](https://teams.microsoft.com/l/channel/19%3adcfd8f824114416d8890ac7deebc5d66%40thread.tacv2/Preuves%2520et%2520D%25C3%25A9duction%2520Automatique?groupId=61159ddd-bead-44f7-aaf6-69e253427128&tenantId=158716cf-46b9-48ca-8c49-c7bb67e575f3)
- 
 - For lab. sessions, the students may install
   `Coq` and `CoqIDE` on their own computer
-  - no need to get the latest version (`v8.11`)
-  - anything above `Coq 8.8` (3 years old) will work
+  - no need to get the latest version (`v8.15`)
+  - anything above `Coq 8.8` (4 years old) will work
   - the [`Coq` main site](https://coq.inria.fr)
   - for Linux, try in that order:
     1. install coq & coqide available for your distribution
@@ -25,7 +19,7 @@
     - there are [packages in here](https://github.com/coq/coq/releases/tag/V8.11.0)
 
 - `Coq` and `CoqIDE` should also be available
-  on the Linux machines in the "Salle Atelis HP 303/309"
+  on the Linux machines in the "Salle Atelis HP"
 
 - For support material:
   - recommended reads:
