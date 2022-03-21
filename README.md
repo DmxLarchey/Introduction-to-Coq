@@ -17,7 +17,11 @@ This course gives an introduction to the Coq proof assistant:
 
 _Coq is a formal proof management system. It provides a formal language to write mathematical definitions, executable algorithms and theorems together with an environment for semi-interactive development of machine-checked proofs. Typical applications include the certification of properties of programming languages (e.g. the CompCert compiler certification project, the Verified Software Toolchain for verification of C programs, or the Iris framework for concurrent separation logic), the formalization of mathematics (e.g. the full formalization of the Feit-Thompson theorem, or homotopy type theory), and teaching._
 
-## Project: TBA
+## Project: counting [bowling](BOWLING.md) scores
+
+The project --- see [detailed project description](BOWLING.md) --- consists in modeling 
+the scoring in the game of bowling and proving that any score from 0 to 300 can be realized
+by a bowling play.
 
 ## Teaching methods
 
