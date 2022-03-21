@@ -27,7 +27,7 @@ To count the score, one counts the total of pins down in the
 * on a strike, the pins down on the two following rolls are
   counted as extra on the strike. For example, a strike followed
   by a strike and a open frame 3+6 counts as 10+10+3.
-* the reason for the extra frame is to complete the score of
+* the reason for the existence of the extra frame is to complete the score of
   the last (or two last) initial frames, if they are spares 
   or strikes.
 

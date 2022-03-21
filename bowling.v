@@ -4,7 +4,7 @@
 (*                             [*] Affiliation LORIA -- CNRS  *)
 (**************************************************************)
 (*      This file is distributed under the terms of the       *)
-(*         CeCILL v2 FREER SOFTWARE LICENSE AGREEMENT         *)
+(*         CeCILL v2 FREE SOFTWARE LICENSE AGREEMENT          *)
 (**************************************************************)
 
 Require Import Arith Lia List Euclid.
@@ -54,10 +54,9 @@ Local Notation "l ':-:' m" := (app m l) (at level 59, left associativity, format
 Local Notation "[ x ]" := ([]-:x) : list_scope.
 Local Notation "[ x ⊳ .. ⊳ y ⊳ z ]" := (( .. ([] -: x) .. -: y) -: z ) : list_scope.
 
-(** The repeater: x↑n = [ x ⊳ x ⊳ ... ⊳ x ] where x is repeated n times *)
-
 Local Reserved Notation "x ↑ n" (at level 50, left associativity, format "x ↑ n"). 
 
+(** The repeater: x↑n = [ x ⊳ x ⊳ ... ⊳ x ] where x is repeated n times *)
 Fixpoint repeat {X} (x : X) n :=
   match n with 
     | 0   => []
@@ -69,13 +68,13 @@ Fact repeat_S X (x : X) n : x↑(S n) = x↑n -: x.
 Proof. reflexivity. Qed.
 
 (** Sum of a list of natural numbers *)
-
 Fixpoint lsum l :=
   match l with
     | []     => 0
     | l -: x => x+lsum l
   end.
 
+(** Some useful arithmetic inequalities *)
 Local Fact lt_0_10 : 0 < 10.  Proof. lia. Qed.
 Local Fact lt_1_10 : 1 < 10.  Proof. lia. Qed.
 Local Fact le_0_10 : 0 <= 10. Proof. lia. Qed.
