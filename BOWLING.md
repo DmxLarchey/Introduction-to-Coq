@@ -12,9 +12,10 @@ from 0 to 300 can be realized by at least one bowling play.
 
 One bowling play is composed of 
 * _10 initial frames_ of one or two _rolls_ cumulating up to 10 _pins_ down:
-  - strictly less than 10 pins down give an _open_ frame;
-  - 10 pins down in two rolls give a _spare_;
-  - and 10 pins down on the first roll give a _strike_; 
+  - strictly less than 10 pins down give an _open_ frame, example 7+2;
+  - 10 pins down in two rolls give a _spare_, example 9+1 or 0+10;
+  - and 10 pins down on the first roll give a _strike_. In that case,
+    there is no second roll; 
 * (possibly) _one extra frame_ composed of one or two rolls. 
   In case of two rolls, if the first roll strikes 10, then 
   10 new pins are made available for the second roll.
