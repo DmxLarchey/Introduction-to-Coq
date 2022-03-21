@@ -123,7 +123,7 @@ Section Bowling.
 
   Arguments iframe2pins r /.
 
- (* Value (number of pins down) of the first ball of a frame *)
+  (* Value (number of pins down) of the first ball of a frame *)
   Definition ifirst r :=
     match r with
       | OPN a _ _ => a
@@ -188,9 +188,9 @@ Section Bowling.
   (* Status of the previous or two previous frames, if any *)
   Inductive status :=
     | status_none     (* the previous frame does not exist, or is open *)
-    | status_spare    (* last frame was a spare *)
-    | status_strike   (* last frame was a strike, but the one before, was not *)
-    | status_2strikes (* last two frame were strikes *)
+    | status_spare    (* the last frame was a spare *)
+    | status_strike   (* the last frame was a strike, but the one before, was not *)
+    | status_2strikes (* the last two frames were strikes *)
     .
 
   Notation SNON := status_none.
@@ -210,7 +210,7 @@ Section Bowling.
 
   Arguments next_status st r /.
 
-  (* Pins down to add depending on the status of the two previous rolls *)
+  (* Pins down to add depending on the status of the two previous frames *)
   Definition status_count st r :=
     match st with
       | SNON => 0                  (* nothing to add here *)
@@ -241,22 +241,22 @@ Section Bowling.
   (* The initial frames of a bowling play predicate:
 
       - l: list of frames
-      - st: status according to (previous) rounds
+      - st: status according to the last two frames
       - n: number of frames
       - sc : score so far
 
       l // st -[n]-> sc denotes
 
-      "given the nr many initial frames stored in the
+      "given the n many initial frames stored in the
        list l, with current status sc, the score is sc"
 
-      two rules:
+      defined by two inductive rules:
 
-            ----------------------- empty play
+            ----------------------- empty play (zero frame)
               [] // SNON -[0]-> 0
 
                      l // st -[n]-> sc
-           --------------------------------------------------- (n<10) next round is r
+           --------------------------------------------------- (n<10) next frame is r
              l-:r // NXT st r -[1+n]-> STC st r + TOT r + sc
 
     *)
@@ -273,7 +273,7 @@ Section Bowling.
       (*---------------------------------------------------*)
       ->  l-:r // NXT st r -[1+n]-> STC st r + TOT r + sc
 
-  where "lr // st -[ nr ]-> sc" := (frames lr st nr sc).
+  where "l // st -[ n ]-> sc" := (frames l st n sc).
 
   Tactic Notation "play" "from" constr(st) :=
     match goal with
@@ -387,7 +387,7 @@ Section Bowling.
             frames_iscore_0 with (1 := H1).
   Admitted.
 
-  (* This theorem allow to prove a predicate l // st -[n]-> sc
+  (* This theorem allows to prove a predicate l // st -[n]-> sc
      by computation: from l, compute (length l), (iscore l 0 0) and
      (istatus l) and verify the values match n, sc and st respectivelly *)
   Theorem check_score l n st sc : 
@@ -410,7 +410,7 @@ Section Bowling.
   (** "score_reached st sc" denoted "I||- sc @ st >>" below
      means: one can compute a list l of 10 initial frames
      such that the score is sc after playing these 10 frames
-     of lr, and the status is then st *)
+     of l, and the status is then st *)
 
   Definition score_reached_in st sc := { l | l // st -[10]-> sc }.
 
@@ -558,7 +558,7 @@ Section Bowling.
   Qed.
 
   (** For any score below 270, one can compute a status st
-      such that <<sc|st>> is reached in the 10 initial rounds *) 
+      such that <<sc|st>> is reached in the 10 initial frames *) 
   Theorem score_from_0_to_270 sc : sc <= 270 -> { st & I||- sc @ st }.
   Proof.
     intros H; apply score_up_to_270 in H.
@@ -574,7 +574,7 @@ Section Bowling.
           /\ st = SNON.
     Proof. induction 1; auto; discriminate. Qed.
 
-    Fact frames_0_inv l st sc : 
+    Lemma frames_0_inv l st sc : 
              l // st -[0]-> sc 
           -> sc = 0 
           /\ st = SNON.
@@ -591,13 +591,13 @@ Section Bowling.
       destruct r; simpl; split; try (easy || lia).
     Qed.
 
-    Fact frames_1_inv l st sc : 
+    Lemma frames_1_inv l st sc : 
              l // st -[1]-> sc 
           -> sc <= 10 
           /\ st <> S2ST.
     Proof. Admitted.
 
-    Fact frames_n_bound l st n sc : l // st -[n]-> sc -> n <= 10.
+    Lemma frames_n_bound l st n sc : l // st -[n]-> sc -> n <= 10.
     Proof. induction 1; lia. Qed.
 
   End frames_inversion_lemmas.
@@ -625,7 +625,7 @@ Section Bowling.
     Fact max_score_S n : 2 <= n -> max_score (S n) = 30 + max_score n.
     Proof. intros; rewrite !max_score_ge_2; lia. Qed.
 
-    Lemma iframes_score_bounded l st n sc : 
+    Lemma frames_score_bounded l st n sc : 
             l // st -[n]-> sc -> sc <= max_score n.
     Proof.
       induction 1 as [ | l st n sc r H1 H3 IH3 ]; auto.
@@ -633,8 +633,8 @@ Section Bowling.
       Check frames_0_inv.
     Admitted.
 
-    Theorem iframes_score_max l st sc : l // st -[10]-> sc -> sc <= 270.
-    Proof. apply iframes_score_bounded. Qed.
+    Theorem frames_score_max l st sc : l // st -[10]-> sc -> sc <= 270.
+    Proof. apply frames_score_bounded. Qed.
 
   End the_maximum_score.
 
@@ -707,7 +707,7 @@ Section Bowling.
   Proof.
     intros (l & e & H); revert H.
     induction 1 as [ ? ? H | ? ? ? ? H | ? ? ? ? ? H | ? ? ? ? ? H ].
-    + apply iframes_score_max in H. lia.
+    + apply frames_score_max in H. lia.
   Admitted.
 
   (** Let us show the converse: any score up to 300 is possible in Bowling *)
@@ -781,7 +781,8 @@ Section Bowling.
   (** More complicated questions for those interested:
      - show that 287 corresponds to two bowling plays
      - characterize precisely the scores which correspond
-       to exactly one bowling play (which are 0 and 288-300).
+       to exactly one bowling play, which are those in the
+       set {0} U [288,300], ie either 0 or above 288.
      - same question for those with two bowling plays
    *) 
 
