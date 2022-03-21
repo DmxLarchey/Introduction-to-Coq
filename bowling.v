@@ -90,115 +90,108 @@ Section Bowling.
   Reserved Notation " l '+:' e '-->' s" (at level 70, format "l  +:  e  -->  s").
   Reserved Notation "'B||-' x" (at level 70, format "B||-  x").
 
-  (** Modelling the Bowling plays with rounds, balls, pins down etc *)
+  (** Modelling the Bowling plays with frames, rolls, pins down etc *)
 
-  (* The (first ten) initial bowling rounds 
+  (* The (first ten) initial bowling frames 
 
-     REG/regular: 2 balls, no strike, no spare
-     SPA/spare:   2 balls, first ball < 10 pins down,
-                           second ball completes to 10 pins
-     STR/strike:  1 ball, 10 pins down
+     OPN/open:    2 rolls, no strike, no spare
+     SPA/spare:   2 rolls, first roll < 10 pins down,
+                           second roll completes to 10 pins
+     STR/strike:  1 roll, 10 pins down
 
    *)
 
-  Inductive iround : Type :=
-    | regular a b : a + b < 10 -> iround (* a pins on 1st ball, b pins on second ball *)
-    | spare a     : a < 10     -> iround (* a pins on 1st ball, 10-a on second ball *)
-    | strike      :               iround (* 10 pins on first ball, no second ball *)
+  Inductive iframe : Type :=
+    | open a b : a + b < 10 -> iframe (* a pins on 1st roll, b pins on second roll *)
+    | spare a  : a < 10     -> iframe (* a pins on 1st roll, 10-a on second roll *)
+    | strike   :               iframe (* 10 pins on first roll, no second roll *)
     .
 
-  Notation REG := regular.
+  Notation OPN := open.
   Notation SPA := spare.
   Notation STR := strike.
 
-  (* round with zero pins down *)
-  Definition ZERO := (REG 0 0 lt_0_10).  
+  (* empty frame, with zero pins down *)
+  Definition ZERO := (OPN 0 0 lt_0_10).  
 
-  (* The list of pins down for each ball of an initial round *)
-
-  Definition iround2pins r :=
+  (* The list of pins down for each roll of an initial frame *)
+  Definition iframe2pins r :=
     match r with
-      | REG a b _ => [a;b]
+      | OPN a b _ => [a;b]
       | SPA a _   => [a;10-a]
       | STR       => [10]
     end.
 
-  Arguments iround2pins r /.
+  Arguments iframe2pins r /.
 
- (* Value (number of pins down) of the first ball of a round *)
-
+ (* Value (number of pins down) of the first ball of a frame *)
   Definition ifirst r :=
     match r with
-      | REG a _ _ => a
+      | OPN a _ _ => a
       | SPA a _   => a
       | STR       => 10
     end.
 
   Arguments ifirst r /.
 
-  (* ifirst matches the first pin of iround2pins *)
-
+  (* ifirst matches the first roll of iframe2pins *)
   Fact ifirst_eq_first_pin r : 
-          match iround2pins r with 
+          match iframe2pins r with 
             | []   => False
             | x::_ => ifirst r = x
           end.
   Proof. destruct r; reflexivity. Qed.
 
-  (* Total of pins down in the initial round *)
-
+  (* Total of pins down of an initial frame *)
   Definition itotal r :=
     match r with
-      | REG a b _ => a + b
+      | OPN a b _ => a + b
       | SPA _ _   => 10
       | STR       => 10
     end.
 
   Arguments itotal r /.
 
-  (* itotal matches the sum of pins in iround2pins *)
-  
-  Fact itotal_eq_sum_pins r : itotal r = lsum (iround2pins r).
-  Proof. destruct r; simpl itotal; unfold iround2pins, lsum; lia. Qed.
+  (* itotal matches the sum of pins in iframe2pins *)  
+  Fact itotal_eq_sum_pins r : itotal r = lsum (iframe2pins r).
+  Proof. destruct r; simpl itotal; unfold iframe2pins, lsum; lia. Qed.
 
-  (* The extra bowling round, one or two balls to complete 
+  (* The extra bowling frame, one or two rolls to complete 
      pending strikes or spares 
 
-     EX0: zero extra ball
-     EX1: one extra ball to complete a spare
-     EX2: two extra balls to complete one (or two) strike(s)
+     EX0: zero extra roll
+     EX1: one extra roll to complete a spare
+     EX2: two extra rolls to complete one (or two) strike(s)
 
-     Notice than if the first ball of EX2 is 10 pins down (ie strike),
-     then a new set of 10 pins is available for the second ball
+     Notice than if the first roll of EX2 is 10 pins down (ie strike),
+     then a new set of 10 pins is made available for the second roll
   *)
 
-  Inductive eround : Type :=
-    | extra0 :                eround
-    | extra1 a : a <= 10   -> eround
-    | extra2 a b : (a < 10 /\ a+b <= 10    (* no strike on first extra ball *) 
-                 \/ a = 10 /\ b <= 10)     (* strike on the first ball, 10 new pins *)
-                           -> eround.
+  Inductive eframe : Type :=
+    | extra0 :                eframe       (* no extra roll *)
+    | extra1 a : a <= 10   -> eframe       (* only one extra roll *)
+    | extra2 a b : (a < 10 /\ a+b <= 10    (* no strike on first extra roll *) 
+                 \/ a = 10 /\ b <= 10)     (* strike on the first roll, 10 new pins *)
+                           -> eframe.
 
   Notation ER0 := extra0.
   Notation ER1 := extra1.
   Notation ER2 := extra2.
 
-  (* The list of pins down for each ball of an extra round *) 
-
-  Definition eround2pins e :=
+  (* The list of pins down for each roll of an extra frame *) 
+  Definition eframe2pins e :=
     match e with
       | ER0        => []
       | ER1 a _    => [a]
       | ER2 a b _  => [a;b]
     end.
 
-  (* Status of the previous or two previous rounds, if any *)
-
+  (* Status of the previous or two previous frames, if any *)
   Inductive status :=
-    | status_none     (* no strike nor spare on the previous round *)
-    | status_spare    (* last round was a spare *)
-    | status_strike   (* last round was a strike, but the one before, was not *)
-    | status_2strikes (* last two rounds were strikes *)
+    | status_none     (* the previous frame does not exist, or is open *)
+    | status_spare    (* last frame was a spare *)
+    | status_strike   (* last frame was a strike, but the one before, was not *)
+    | status_2strikes (* last two frame were strikes *)
     .
 
   Notation SNON := status_none.
@@ -206,28 +199,26 @@ Section Bowling.
   Notation S1ST := status_strike.
   Notation S2ST := status_2strikes.
 
-  (* New status from previous status after an initial round *)
-
-  Definition next_status (st : status) (r : iround) :=
+  (* New status from previous status after an initial frame *)
+  Definition next_status (st : status) (r : iframe) :=
     match st, r with
       | S1ST , STR       => S2ST  (* strike after a strike *)
       | S2ST , STR       => S2ST  (* strike after two strikes *)
       | _    , STR       => S1ST  (* strike after not a strike *)
       | _    , SPA _ _   => SSPA  (* spare after anything *)
-      | _    , REG _ _ _ => SNON  (* regular round after anything *)
+      | _    , OPN _ _ _ => SNON  (* open frame after anything *)
     end.
 
   Arguments next_status st r /.
 
- (* Pins down to add depending on the status of the two previous balls *)
-
+  (* Pins down to add depending on the status of the two previous rolls *)
   Definition status_count st r :=
     match st with
       | SNON => 0                  (* nothing to add here *)
-      | SSPA => ifirst r           (* count the first ball value on the previous round *)
-      | S1ST => itotal r           (* count the two balls value on the previous round *)
-      | S2ST => ifirst r+itotal r  (* count the first ball on the two previous rounds 
-                                      plus the second on the previous round *) 
+      | SSPA => ifirst r           (* count the first roll value on the previous frame *)
+      | S1ST => itotal r           (* count the two rolls value on the previous frame *)
+      | S2ST => ifirst r+itotal r  (* count the first roll on the two previous frames 
+                                      plus the second on the previous frame *) 
     end.
 
   Arguments status_count st r /.
@@ -236,7 +227,7 @@ Section Bowling.
   Notation STC := status_count.
   Notation TOT := itotal.
 
-  Fact next_status_REG st a b H : NXT st (REG a b H) = SNON.
+  Fact next_status_OPN st a b H : NXT st (OPN a b H) = SNON.
   Proof.
   Admitted.
 
@@ -248,60 +239,60 @@ Section Bowling.
   Proof.
   Admitted.
 
-  (* The initial rounds of a bowling play predicate:
+  (* The initial frames of a bowling play predicate:
 
-      - lr: list of rounds
+      - l: list of frames
       - st: status according to (previous) rounds
-      - nr: number of rounds
+      - n: number of frames
       - sc : score so far
 
-      lr // st -[nr]-> sc denotes
+      l // st -[n]-> sc denotes
 
-      "given the nr many initial rounds stored in the
-       list lr, with current status sc, the score is sc"
+      "given the nr many initial frames stored in the
+       list l, with current status sc, the score is sc"
 
       two rules:
 
             ----------------------- empty play
               [] // SNON -[0]-> 0
 
-                     lr // st -[nr]-> sc
-           --------------------------------------------------- (nr<10) next round is r
-            lr-:r // NXT st r -[1+nr]-> STC st r + TOT r + sc
+                     l // st -[n]-> sc
+           --------------------------------------------------- (n<10) next round is r
+             l-:r // NXT st r -[1+n]-> STC st r + TOT r + sc
 
     *)
 
-  Inductive rounds : list iround -> status -> nat -> nat -> Prop :=
-    | rounds_start :         
+  Inductive frames : list iframe -> status -> nat -> nat -> Prop :=
+    | frames_start :         
 
           (*---------------------*)
              [] // SNON -[0]-> 0
 
-    | rounds_next lr st nr sc r : 
+    | frames_next l st n sc r : 
 
-             nr < 10     ->      lr // st -[nr]-> sc
+             n < 10      ->      l // st -[n]-> sc
       (*---------------------------------------------------*)
-      -> lr-:r // NXT st r -[1+nr]-> STC st r + TOT r + sc
+      ->  l-:r // NXT st r -[1+n]-> STC st r + TOT r + sc
 
-  where "lr // st -[ nr ]-> sc" := (rounds lr st nr sc).
+  where "lr // st -[ nr ]-> sc" := (frames lr st nr sc).
 
   Tactic Notation "play" "from" constr(st) :=
     match goal with
-      | |- _-:?r // _ -[ _ ]-> _ => apply (rounds_next _ st _ _ r)
+      | |- _-:?r // _ -[ _ ]-> _ => apply (frames_next _ st _ _ r)
     end; simpl; auto; try lia.
 
-  (* Any sequence of rounds of length <= 10 is valid:
-       if the length of lr is below 10 then one can compute
+  (* Any sequence of frames of length <= 10 is valid:
+       if the length of l is below 10 then one can compute
        a status st, and a score sc such that
-            lr // st -[length lr]-> sc *)
+            l // st -[length l]-> sc *)
 
-  Theorem rounds_is_total lr : 
-             length lr <= 10 
-          -> { st : _ & { sc | lr // st -[length lr]-> sc } }.
+  Theorem frames_is_total l : 
+             length l <= 10 
+          -> { st : _ & { sc | l // st -[length l]-> sc } }.
   Proof.
-    induction lr as [ | r lr IHlr ]; simpl; intros Hlr.
+    induction l as [ | r l IHl ]; simpl; intros Hl.
     + exists SNON, 0; constructor.
-    + destruct IHlr as (st & sc & Hsc); try lia.
+    + destruct IHl as (st & sc & Hsc); try lia.
       destruct r as [ a b H | a H | ].
       * exists SNON; destruct st.
         - exists (a+b+sc); play from SNON.
@@ -312,43 +303,43 @@ Section Bowling.
       * admit.
   Admitted.
 
-  (** A backward fixpoint computation of the score for a list of rounds 
-         r_score [ r1 ⊳ r2 ⊳ ... ⊳ r10 ] a b 
+  (** A backward fixpoint computation of the score for a list of frames 
+         iscore [ r1 ⊳ r2 ⊳ ... ⊳ r10 ] a b 
 
-         lr = [ r1 ⊳ r2 ⊳ ... ⊳ r10 ]
-         (a,b) = extra round, 0 if no ball
+         l = [ r1 ⊳ r2 ⊳ ... ⊳ r10 ]
+         (a,b) = extra frame, 0 if no roll
 
-         r_score lr a b = score of lr considering next to 2 balls are [a; b]
+         iscore l a b = score of l considering next to 2 rolls are [a; b]
 
-            r_score [ r1 ⊳ r2 ⊳ ... ⊳ ri ⊳ (u,v) ] a b 
-          = extra + u+v + r_score [ r1 ⊳ r2 ⊳ ... ⊳ ri ] u v
+            iscore [ r1 ⊳ r2 ⊳ ... ⊳ ri ⊳ (u,v) ] a b 
+          = extra + u+v + iscore [ r1 ⊳ r2 ⊳ ... ⊳ ri ] u v
 
           where extra is 
-             - 0 if (u,v) is regular
+             - 0 if (u,v) is open
              - a if (u,v) is a spare and 
-             - a+b if (u,v) is a strike 
+             - a+b if (u,_) is a strike 
     *)
 
-  Fixpoint iscore lr (a b : nat) :=
-    match lr with
+  Fixpoint iscore l (a b : nat) :=
+    match l with
       | []           => 0 
-      | lr-:REG u v _ =>       u+v + iscore lr u  v
-      | lr-:SPA u _   => a   + 10  + iscore lr u (10-u)
-      | lr-:STR       => a+b + 10  + iscore lr 10 a
+      | l-:OPN u v _ =>       u+v + iscore l u  v
+      | l-:SPA u _   => a   + 10  + iscore l u (10-u)
+      | l-:STR       => a+b + 10  + iscore l 10 a
     end.
 
-  Fact iscore_fix lr r a b :
-       iscore (lr -: r) a b 
+  Fact iscore_fix l r a b :
+       iscore (l -: r) a b 
      = match r with
-         | REG u v _ => u+v+iscore lr u v
-         | SPA u _   => a+10+iscore lr u (10-u)
-         | STR       => a+b+10+iscore lr 10 a
+         | OPN u v _ => u+v+iscore l u v
+         | SPA u _   => a+10+iscore l u (10-u)
+         | STR       => a+b+10+iscore l 10 a
        end.
   Proof. reflexivity. Qed.
 
-  Theorem rounds_iscore lr st nr sc a b :
-          lr // st -[nr]-> sc 
-       -> iscore lr a b 
+  Theorem frames_iscore l st n sc a b :
+          l // st -[n]-> sc 
+       -> iscore l a b 
         = match st with
             | SNON => 0
             | SSPA => a
@@ -357,60 +348,60 @@ Section Bowling.
           end + sc. 
   Proof.
     intros H; revert H a b.
-    induction 1 as [ | lr st nr sc r Hn H IH ]; intros a b; auto.
+    induction 1 as [ | l st n sc r Hn H IH ]; intros a b; auto.
     rewrite iscore_fix.
     revert IH; case_eq st; intros Est IH; (case_eq r; [intros u v Huv | intros u Hu | ]; intros Hr).
   Admitted.
 
-  Corollary rounds_iscore_0 lr st nr sc :
-          lr // st -[nr]-> sc -> sc = iscore lr 0 0.
+  Corollary frames_iscore_0 l st n sc :
+          l // st -[n]-> sc -> sc = iscore l 0 0.
   Proof.
   Admitted. 
 
-  Definition istatus lr := 
-    match lr with
+  Definition istatus l := 
+    match l with
       | _ -: STR -: STR => S2ST
       | _ -: STR        => S1ST
       | _ -: SPA _ _    => SSPA
       | _               => SNON
     end.
 
-  Theorem rounds_istatus lr st nr sc : lr // st -[nr]-> sc -> st = istatus lr.
+  Theorem frames_istatus l st n sc : l // st -[n]-> sc -> st = istatus l.
   Proof.
-    induction 1 as [ | lr st nr sc r Hn H IH ]; auto.
+    induction 1 as [ | l st n sc r Hn H IH ]; auto.
   Admitted.
 
-  Fact rounds_length lr st nr sc : lr // st -[nr]-> sc -> nr = length lr.
+  Fact frames_length l st n sc : l // st -[n]-> sc -> n = length l.
   Proof.
   Admitted.
 
-  Lemma rounds_is_functional lr st1 st2 n1 n2 sc1 sc2 :
-          lr // st1 -[n1]-> sc1 
-       -> lr // st2 -[n2]-> sc2 
+  Lemma frames_is_functional l st1 st2 n1 n2 sc1 sc2 :
+          l // st1 -[n1]-> sc1 
+       -> l // st2 -[n2]-> sc2 
        -> n1 = n2 
        /\ st1 = st2 
        /\ sc1 = sc2.
   Proof.
     intros H1 H2.
-    rewrite rounds_length with (1 := H1),
-            rounds_istatus with (1 := H1), 
-            rounds_iscore_0 with (1 := H1).
+    rewrite frames_length with (1 := H1),
+            frames_istatus with (1 := H1), 
+            frames_iscore_0 with (1 := H1).
   Admitted.
 
-  (* This theorem allow to verify a proposition lr // st -[nr]-> sc
-     by computation: from lr, compute ⌊lr⌋, (iscore lr 0 0) and
-     (istatus lr) and verify the values match nr, sc and st respectivelly *)
-  Theorem check_score lr nr st sc : 
-            nr <= 10 
-         -> nr = length lr 
-         -> sc = iscore lr 0 0 
-         -> st = istatus lr 
-         -> lr // st -[nr]-> sc.
+  (* This theorem allow to prove a predicate l // st -[n]-> sc
+     by computation: from l, compute (length l), (iscore l 0 0) and
+     (istatus l) and verify the values match n, sc and st respectivelly *)
+  Theorem check_score l n st sc : 
+            n <= 10 
+         -> n = length l 
+         -> sc = iscore l 0 0 
+         -> st = istatus l 
+         -> l // st -[n]-> sc.
   Proof.
     intros H1 H2 H3 H4.
-    destruct (rounds_is_total lr) as (st' & sc' & H5); try lia.
+    destruct (frames_is_total l) as (st' & sc' & H5); try lia.
     rewrite <- H2 in H5.
-    generalize (rounds_iscore_0 _ _ _ _ H5) (rounds_istatus _ _ _ _ H5).
+    generalize (frames_iscore_0 _ _ _ _ H5) (frames_istatus _ _ _ _ H5).
     intros; subst; auto.
   Qed.
 
@@ -418,16 +409,16 @@ Section Bowling.
     apply check_score; simpl; auto; lia.
 
   (** "score_reached st sc" denoted "I||- sc @ st >>" below
-     means: one can compute a list lr of initial rounds
-     such that the score is sc after playing the 10 rounds
+     means: one can compute a list l of 10 initial frames
+     such that the score is sc after playing these 10 frames
      of lr, and the status is then st *)
 
-  Definition score_reached_in st sc := { lr | lr // st -[10]-> sc }.
+  Definition score_reached_in st sc := { l | l // st -[10]-> sc }.
 
   Notation "I||- x @ y" := (score_reached_in y x) (at level 70).
 
   (** We describe how to get scores from 0 to 270 in 
-      the 10 initial rounds *)
+      the 10 initial frames *)
 
   Section from_0_to_29.
 
@@ -435,11 +426,11 @@ Section Bowling.
 
     Variable (sc : nat) (Hsc : sc < 10).
 
-    Tactic Notation "initial" "rounds" constr(l) := exists l; check score. 
+    Tactic Notation "frames" constr(l) := exists l; check score. 
 
     (* How to get a score from 0 to 9 *)
     Fact score_0_9 : I||- sc @ SNON.
-    Proof. initial rounds ([REG 0 sc Hsc] :-: ZERO↑9). Qed.
+    Proof. frames ([OPN 0 sc Hsc] :-: ZERO↑9). Qed.
 
     (* How to get a score from 10 to 19 *)
     Fact score_10_19 : I||- sc+10 @ SNON.
@@ -575,49 +566,49 @@ Section Bowling.
     destruct H as [ n a Hn Ha | n Hn | n a b Hn Hab | n a Hn Ha | a Ha | ].
   Admitted.
 
-  Section rounds_inversion_lemmas.
+  Section frames_inversion_lemmas.
 
-    Let rounds_0 lr st nr sc : 
-             lr // st -[nr]-> sc 
-          -> nr = 0 
+    Let frames_0 l st n sc : 
+             l // st -[n]-> sc 
+          -> n = 0 
           -> sc = 0 
           /\ st = SNON.
     Proof. induction 1; auto; discriminate. Qed.
 
-    Fact rounds_0_inv lr st sc : 
-             lr // st -[0]-> sc 
+    Fact frames_0_inv l st sc : 
+             l // st -[0]-> sc 
           -> sc = 0 
           /\ st = SNON.
     Proof. Admitted.
 
-    Let rounds_1 lr st nr sc : 
-             lr // st -[nr]-> sc 
-          -> nr = 1 
+    Let frames_1 l st n sc : 
+             l // st -[n]-> sc 
+          -> n = 1 
           -> sc <= 10 
           /\ st <> S2ST.
     Proof. 
-      induction 1 as [ | lr st [] sc r H1 H3 _ ]; try discriminate; intros _.
-      apply rounds_0 in H3 as (H3 & ->); auto.
+      induction 1 as [ | l st [] sc r H1 H3 _ ]; try discriminate; intros _.
+      apply frames_0 in H3 as (H3 & ->); auto.
       destruct r; simpl; split; try (easy || lia).
     Qed.
 
-    Fact rounds_1_inv lr st sc : 
-             lr // st -[1]-> sc 
+    Fact frames_1_inv l st sc : 
+             l // st -[1]-> sc 
           -> sc <= 10 
           /\ st <> S2ST.
     Proof. Admitted.
 
-    Fact rounds_n_bound lr st nr sc : lr // st -[nr]-> sc -> nr <= 10.
+    Fact frames_n_bound l st n sc : l // st -[n]-> sc -> n <= 10.
     Proof. induction 1; lia. Qed.
 
-  End rounds_inversion_lemmas.
+  End frames_inversion_lemmas.
 
   Section the_maximum_score.
 
     (* We show that the maximum score after 
-        - 0 round is 0
-        - 1 round is 10
-        - n>=2 rounds is 30(n-1) *) 
+        - 0 frame is 0
+        - 1 frame is 10
+        - n>=2 frames is 30(n-1) *) 
 
     Definition max_score n := 
       match n with
@@ -635,65 +626,65 @@ Section Bowling.
     Fact max_score_S n : 2 <= n -> max_score (S n) = 30 + max_score n.
     Proof. intros; rewrite !max_score_ge_2; lia. Qed.
 
-    Lemma rounds_score_bounded lr st nr sc : 
-            lr // st -[nr]-> sc -> sc <= max_score nr.
+    Lemma iframes_score_bounded l st n sc : 
+            l // st -[n]-> sc -> sc <= max_score n.
     Proof.
-      induction 1 as [ | lr st nr sc r H1 H3 IH3 ]; auto.
-      destr nr up to 2.
+      induction 1 as [ | l st n sc r H1 H3 IH3 ]; auto.
+      destr n up to 2.
+      Check frames_0_inv.
     Admitted.
 
-    Theorem irounds_score_max lr st sc : lr // st -[10]-> sc -> sc <= 270.
-    Proof. apply rounds_score_bounded. Qed.
+    Theorem iframes_score_max l st sc : l // st -[10]-> sc -> sc <= 270.
+    Proof. apply iframes_score_bounded. Qed.
 
   End the_maximum_score.
 
   (** Definition of a bowling play:
-        - composed of 10 initial rounds
-        - plus an extra (possibly empty) round 
-        - depending on the status of the last two ball (status)
+        - composed of 10 initial frames
+        - plus an extra (possibly empty) frame 
+        - depending on the status of the last two rolls (status)
 
-      A valid bowling play (lr,e) of score sc is denoted 
+      A valid bowling play (l,e) of score sc is denoted 
 
-           lr +: e --> sc
+           l +: e --> sc
    *)
 
-  Inductive bowling : list iround -> eround -> nat -> Prop :=
-    | bowling_none lr sc :       lr // SNON -[10]-> sc -> lr +: ER0       -->       sc
-    | bowling_ext1 lr sc a H :   lr // SSPA -[10]-> sc -> lr +: ER1 a H   -->     a+sc
-    | bowling_ext2 lr sc a b H : lr // S1ST -[10]-> sc -> lr +: ER2 a b H -->   a+b+sc
-    | bowling_ext3 lr sc a b H : lr // S2ST -[10]-> sc -> lr +: ER2 a b H --> 2*a+b+sc
+  Inductive bowling : list iframe -> eframe -> nat -> Prop :=
+    | bowling_none l sc :       l // SNON -[10]-> sc -> l +: ER0       -->       sc
+    | bowling_ext1 l sc a H :   l // SSPA -[10]-> sc -> l +: ER1 a H   -->     a+sc
+    | bowling_ext2 l sc a b H : l // S1ST -[10]-> sc -> l +: ER2 a b H -->   a+b+sc
+    | bowling_ext3 l sc a b H : l // S2ST -[10]-> sc -> l +: ER2 a b H --> 2*a+b+sc
    where "l +: e --> s" := (bowling l e s).
 
-  (* The list of pins down on each ball of a bowling play *)
-  Definition bowling2pins lr e := flat_map iround2pins lr :-: eround2pins e.
+  (* The list of pins down on each roll of a bowling play *)
+  Definition bowling2pins lr e := flat_map iframe2pins lr :-: eframe2pins e.
   
-  (* For every initial 10 rounds scoring sc, one can compute an extra round
-     e such that (lr,e) compose a bowling play of score sc 
+  (* For every initial 10 frames l scoring sc, one can compute an extra frame
+     e such that (l,e) constitute a bowling play of score sc 
      Notice that only scores below 270 can be reached that way *)
-  Lemma bowling_extends_rounds lr st sc : 
-       lr // st -[10]-> sc -> { e | lr +: e --> sc }.
+  Lemma bowling_extends_rounds l st sc : 
+       l // st -[10]-> sc -> { e | l +: e --> sc }.
   Proof.
     destruct st.
     + exists ER0; constructor; auto.
   Admitted.
 
   (** score computes the score correcly *)
-
-  Definition score lr e :=
+  Definition score l e :=
     match e with 
-      | ER0       => iscore lr 0 0
-      | ER1 a _   => iscore lr a 0
-      | ER2 a b _ => iscore lr a b
+      | ER0       => iscore l 0 0
+      | ER1 a _   => iscore l a 0
+      | ER2 a b _ => iscore l a b
     end.
 
-  Theorem score_correct lr e sc : lr +: e --> sc -> sc = score lr e.
+  Theorem score_correct l e sc : l +: e --> sc -> sc = score l e.
   Proof.
     induction 1 as [ ? ? H | ? ? ? ? H | ? ? ? ? ? H | ? ? ? ? ? H ].
   Admitted. 
 
-  Lemma bowling_is_functional lr e sc1 sc2 : 
-          lr +: e --> sc1 
-       -> lr +: e --> sc2 
+  Lemma bowling_is_functional l e sc1 sc2 : 
+          l +: e --> sc1 
+       -> l +: e --> sc2 
        -> sc1 = sc2.
   Proof.
     intros H1 H2.
@@ -704,20 +695,20 @@ Section Bowling.
 
   (** "bowling_score sc" denoted "B||- sc" below 
       means one can compute 
-        - a list lr of initial rounds 
-        - and an extra round e 
+        - a list l of initial frames 
+        - and an extra frame e 
       which combined give the score sc *) 
-  Definition bowling_score sc := { lr : list iround & { e : eround | lr +: e --> sc } }.
+  Definition bowling_score sc := 
+    { lr : list iframe & { e : eframe | lr +: e --> sc } }.
 
   Notation "B||- x" := (bowling_score x).
 
-  (** Score is bounded by 300 in the Bowling game *)
-
-  Theorem is_bowling_score_bounded sc : B||- sc -> sc <= 300.
+  (* Score is bounded by 300 in the Bowling game *)
+  Theorem bowling_score_bounded sc : B||- sc -> sc <= 300.
   Proof.
     intros (l & e & H); revert H.
     induction 1 as [ ? ? H | ? ? ? ? H | ? ? ? ? ? H | ? ? ? ? ? H ].
-    + apply irounds_score_max in H. lia.
+    + apply iframes_score_max in H. lia.
   Admitted.
 
   (** Let us show the converse: any score up to 300 is possible in Bowling *)
@@ -738,7 +729,7 @@ Section Bowling.
 
   Section from_270_to_300.
 
-    (* For any value n up to 30, there is an extra ER2 a b round such that n = 2a+b *)
+    (* For any value n up to 30, there is an extra frame (ER2 a b _) such that n = 2a+b *)
     Lemma from_0_to_30 n : n <= 30 -> { e | match e with ER2 a b _ => n = 2*a+b | _ => False end }.
     Proof.
       intros H1.
@@ -760,15 +751,14 @@ Section Bowling.
 
   End from_270_to_300.
 
-  (* Any score up to 300 can be reached by a play *)
-
+  (* Any score up to 300 can be reached by a bowling play *)
   Theorem any_is_bowling_score sc : sc <= 300 -> B||- sc.
   Proof.
     intros Hs.
     destruct (le_lt_dec sc 270).
   Admitted.
 
-  (** Remaing extra open questions *)
+  (** Remaing extra open questions, more difficult *)
 
   (* Show that scores from 1 to 280 can be realized with at least
      two different bowling plays *)

@@ -3,32 +3,33 @@
 ## Goal of the project
 
 The goal of the project is to model the _scoring_ in the [game of
-Bowling](https://fr.wikipedia.org/wiki/Bowling).
-Ultimately, we show that the score of a Bowling play is a natural number
+bowling](https://fr.wikipedia.org/wiki/Bowling).
+Ultimately, we show that the score of a bowling play is a natural number
 between 0 (minimum score) and 300 (maximum score) and that every score 
 from 0 to 300 can be realized by at least one bowling play.
 
-## Quick informal description a the scoring in bowling
+## Quick informal description of the scoring in bowling
 
 One bowling play is composed of 
-* _10 initial rounds_ of one or two balls cumulating up to 10 pins down:
-  - less than 10 pins down give a regular round;
-  - 10 pins down in two balls give a _spare_;
-  - and 10 pins down on the first ball give a _strike_; 
-* (possibly) _one extra round_ composed of one or two balls. 
-  In case of two balls, of the first ball strikes 10, then 
-  10 new pins are made available for the second ball.
+* _10 initial frames_ of one or two _rolls_ cumulating up to 10 _pins_ down:
+  - strictly less than 10 pins down give an _open_ frame;
+  - 10 pins down in two rolls give a _spare_;
+  - and 10 pins down on the first roll give a _strike_; 
+* (possibly) _one extra frame_ composed of one or two rolls. 
+  In case of two rolls, if the first roll strikes 10, then 
+  10 new pins are made available for the second roll.
 
-To count the score, you count the total of pins down in the
-10 initial rounds. But spares and strikes get an extra value:
-* on a spare, the pins down on the following ball is counted 
+To count the score, one counts the total of pins down in the
+10 initial frames. But spares and strikes get extra pin value:
+* on a spare, the pins down on the following roll is counted 
   as extra on the spare. For example, a spare 9+1 followed
-  by a regular round 5+3 counts as 9+1+3;
-* on a strike, the pins down on the two following balls are
+  by a open frame 5+3 counts as 9+1+5;
+* on a strike, the pins down on the two following rolls are
   counted as extra on the strike. For example, a strike followed
-  by a strike and a regular round 3+6 counts as 10+10+3.
-* the reason for the extra round is to complete the score of
-  the 10th initial round, if it is a spare or a strike.
+  by a strike and a open frame 3+6 counts as 10+10+3.
+* the reason for the extra frame is to complete the score of
+  the last (or two last) initial frames, if they are spares 
+  or strikes.
 
 ## The code source code to complete the project
 
