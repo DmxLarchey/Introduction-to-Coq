@@ -768,7 +768,7 @@ Section Bowling.
     destruct (le_lt_dec sc 270).
   Admitted.
 
-  (** Remaing open questions *)
+  (** Remaing extra open questions *)
 
   (* Show that scores from 1 to 280 can be realized with at least
      two different bowling plays *)
@@ -780,19 +780,20 @@ Section Bowling.
           /\ bowling2pins lr1 e1 <> bowling2pins lr2 e2.
   Admitted.
 
-  (* Show that for scores above 289, there is at most one
+  (* Show that for scores above 290, there is at most one
      bowling play realizing the score *)
   Theorem exactly_one sc lr1 e1 lr2 e2 : 
-          289 <= sc 
+          290 <= sc 
        -> lr1 +: e1 --> sc
        -> lr2 +: e2 --> sc
        -> bowling2pins lr1 e1 = bowling2pins lr2 e2.
   Admitted.
 
-  (** More complicated questions:
+  (** More complicated questions for those interested:
+     - show that 287 corresponds to two bowling plays
      - characterize precisely the scores which correspond
-       to exactly one bowling play.
-     - same question for two bowling plays
+       to exactly one bowling play (which are 0 and 288-300).
+     - same question for those with two bowling plays
    *) 
 
 End Bowling.
