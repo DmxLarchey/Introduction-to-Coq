@@ -35,7 +35,7 @@ To count the score, one counts the total of pins down in the
 ## The code source code to complete the project
 
 The standalone Coq source file [`bowling.v`](bowling.v) contains
-code to achieve this modeling up to the charaterization of realizable
+code to achieve this modeling up to the characterization of realizable
 scores. Your goal is to _fill the holes._
 Holes are totally `Admitted` or partially `admit`ted proof scripts.
 The proof sketch will lead you to the goal. 
