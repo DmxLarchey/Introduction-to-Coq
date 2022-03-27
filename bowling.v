@@ -248,14 +248,14 @@ Section Bowling.
       l // st -[n]-> sc denotes
 
       "given the n many initial frames stored in the
-       list l, with current status sc, the score is sc"
+       list l, with current status st, the score is sc"
 
       defined by two inductive rules:
 
             ----------------------- empty play (zero frame)
               [] // SNON -[0]-> 0
 
-                     l // st -[n]-> sc
+                       l // st -[n]-> sc
            --------------------------------------------------- (n<10) next frame is r
              l-:r // NXT st r -[1+n]-> STC st r + TOT r + sc
 
@@ -350,6 +350,7 @@ Section Bowling.
     induction 1 as [ | l st n sc r Hn H IH ]; intros a b; auto.
     rewrite iscore_fix.
     revert IH; case_eq st; intros Est IH; (case_eq r; [intros u v Huv | intros u Hu | ]; intros Hr).
+    + simpl; rewrite IH; lia.
   Admitted.
 
   Corollary frames_iscore_0 l st n sc :
