@@ -52,7 +52,7 @@ Local Notation "l '-:' x" := (cons x l) (at level 59, left associativity, format
 Local Notation "l ':-:' m" := (app m l) (at level 59, left associativity, format "l :-: m") : list_scope.
 
 Local Notation "[ x ]" := ([]-:x) : list_scope.
-Local Notation "[ x ⊳ .. ⊳ y ⊳ z ]" := (( .. ([] -: x) .. -: y) -: z ) : list_scope.
+(* Local Notation "[ x ⊳ .. ⊳ y ⊳ z ]" := (( .. ([] -: x) .. -: y) -: z ) : list_scope. *)
 
 Local Reserved Notation "x ↑ n" (at level 50, left associativity, format "x ↑ n"). 
 
