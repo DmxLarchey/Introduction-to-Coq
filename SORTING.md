@@ -3,10 +3,10 @@
 ## But du projet
 
 Le but du projet consiste à certifier trois algorithmes de tri
-classiques, par extraction de Coq OCaml depuis des preuves en Coq.
-* le tri par _insertion_ (le plus simple);
-* le tri rapide, ou _quick sort_;
-* le tri fusion, ou _merge sort_.
+classiques, par extraction de code OCaml depuis des preuves en Coq.
+* le tri par [_insertion_](https://fr.wikipedia.org/wiki/Tri_par_insertion) (le plus simple);
+* le tri rapide, ou [_quick sort_](https://fr.wikipedia.org/wiki/Tri_rapide);
+* le tri fusion, ou [_merge sort_](https://fr.wikipedia.org/wiki/Tri_fusion).
 
 Les trois algorithmes sont représentés dans le type `sorting_function : (list X -> list X) -> Prop`
 où `sorting_function s` est satisfaite quand pour toute liste `l : list X`, la liste
