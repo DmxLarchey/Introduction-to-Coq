@@ -14,6 +14,13 @@ où `sorting_function s` est satisfaite quand pour toute liste `l : list X`, la 
 
 https://github.com/DmxLarchey/Introduction-to-Coq/blob/8bc6ae4da104069e9fab34305ea5238f2982351b/sorting_algorithms.v#L319-L320
 
+A noter que toutes les fonctions de tri revoient les mêmes résultats, ce qui s'exprime
+ainsi:
+
+https://github.com/DmxLarchey/Introduction-to-Coq/blob/dd77e9267808f15ed10cf8f52a39323485b7cb52/sorting_algorithms.v#L340-343
+
+même si elles ne suivent pas la même méthode pour obtenir une liste triée.
+
 ## Le code source Coq à compléter pour le projet
 
 Le code source Coq se trouve dans le fichier [`sorting_algorithms.v`](sorting_algorithms.v) 
