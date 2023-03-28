@@ -17,7 +17,7 @@ https://github.com/DmxLarchey/Introduction-to-Coq/blob/8bc6ae4da104069e9fab34305
 A noter que toutes les fonctions de tri revoient les mêmes résultats, ce qui s'exprime
 ainsi:
 
-https://github.com/DmxLarchey/Introduction-to-Coq/blob/dd77e9267808f15ed10cf8f52a39323485b7cb52/sorting_algorithms.v#L340-343
+https://github.com/DmxLarchey/Introduction-to-Coq/blob/dd77e9267808f15ed10cf8f52a39323485b7cb52/sorting_algorithms.v#L340-L343
 
 même si elles ne suivent pas la même méthode pour obtenir une liste triée.
 
