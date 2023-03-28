@@ -12,6 +12,8 @@ Les trois algorithmes sont représentés dans le type `sorting_function : (list 
 où `sorting_function s` est satisfaite quand pour toute liste `l : list X`, la liste
 `s l` est triée et aussi permutable avec `l`.
 
+https://github.com/DmxLarchey/Introduction-to-Coq/blob/8bc6ae4da104069e9fab34305ea5238f2982351b/sorting_algorithms.v#L319-L320
+
 ## Le code source Coq à compléter pour le projet
 
 Le code source Coq se trouve dans le fichier [`sorting_algorithms.v`](sorting_algorithms.v) 
