@@ -153,8 +153,8 @@ Section perm.
 
 End perm.
 
-(** On va trier les listes en utilisant un ordre total décidable,
-    c'est à dire, une relation binaire 
+(** On va trier les listes en utilisant un ordre total 
+    et calculable, c'est à dire, une relation binaire 
 
          R : X -> X -> Prop 
 
@@ -177,7 +177,7 @@ Parameter (R_refl  : forall x, x ≤ x)
           (R_cmp   : forall x y, { b : bool | if b then x ≤ y else y ≤ x }).
 
 (* R_cmp x y est de type { b : bool | if b then x ≤ y else y ≤ x }, càd
-   une paire dépendante (b,Hb) où 
+   une paire dépendante (b,Hb) où
       - b est de type bool; 
       - Hb est de type (if b then x ≤ y else y ≤ x).
    Donc le type de Hb dépend de la valeur de b. Plus précisément, b est true
