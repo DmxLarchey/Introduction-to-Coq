@@ -102,7 +102,7 @@ Section plus_minus_mult.
 
   Fact minus_0 a : a ⊖ 0 = a.
   Proof. (* induction a; simpl; trivial. *)
-    induction a as [ | a IHa ].
+    destruct a as [ | a ].
     + simpl; trivial.
     + simpl; trivial.
   Qed.
@@ -128,6 +128,44 @@ Section plus_minus_mult.
   (* a ⊖ b ⊕ b <> a *)
 
   Eval compute in 1 ⊖ 3 ⊕ 3.
+
+  Fact plus_cancel_l a b c : a ⊕ b = a ⊕ c -> b = c.
+  Proof.
+    intros E.
+    rewrite <- (plus_minus a b), E, plus_minus.
+    trivial.
+  Qed.
+
+  Fact plus_cancel_r a b c : a ⊕ c = b ⊕ c -> a = b.
+  Proof.
+    rewrite !(plus_comm _ c).
+    apply plus_cancel_l.
+  Qed.
+
+  Fact discriminate n : S n = O -> False.
+  Proof.
+    (* discriminate. *)
+    intros H.
+    set (f n := match n with 0 => False | S  _ => True end).
+    change (f 0).
+    rewrite <- H.
+    simpl.
+    trivial.
+  Qed. 
+
+  Fact plus_eq_0 a b : a ⊕ b = 0 <-> a = 0 /\ b = 0.
+  Proof.
+    split.
+    + destruct a.
+      * simpl.
+        intros ->; auto.
+      * simpl.
+        intros C.
+        exfalso.
+        discriminate.
+    + intros (-> & ->).
+      trivial.
+  Qed.
 
   Fact minus_plus_assoc a b c : a ⊖ b ⊖ c = a ⊖ (b ⊕ c).
   Proof.
@@ -171,45 +209,6 @@ Section plus_minus_mult.
           intros.
           f_equal.
           apply IHa; trivial.
-  Qed.
-
-  Fact plus_cancel_l a b c : a ⊕ b = a ⊕ c -> b = c.
-  Proof.
-    intros E.
-    apply f_equal with (f := fun x => x ⊖ a) in E.
-    rewrite !plus_minus in E.
-    trivial.
-  Qed.
-
-  Fact plus_cancel_r a b c : a ⊕ c = b ⊕ c -> a = b.
-  Proof.
-    rewrite !(plus_comm _ c).
-    apply plus_cancel_l.
-  Qed.
-
-  Fact discriminate n : S n = O -> False.
-  Proof.
-    (* discriminate. *)
-    intros H.
-    set (f n := match n with 0 => False | S  _ => True end).
-    change (f 0).
-    rewrite <- H.
-    simpl.
-    trivial.
-  Qed. 
-
-  Fact plus_eq_0 a b : a ⊕ b = 0 <-> a = 0 /\ b = 0.
-  Proof.
-    split.
-    + destruct a.
-      * simpl.
-        intros ->; auto.
-      * simpl.
-        intros C.
-        exfalso.
-        discriminate.
-    + intros (-> & ->).
-      trivial.
   Qed.
 
   Fixpoint mymult a b :=
