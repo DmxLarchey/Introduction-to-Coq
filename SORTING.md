@@ -49,14 +49,15 @@ de les étudier pour comprendre comment elles fonctionnent.
 
 ## Objectifs et dates
 
-Le projet commence le 28 mars 2023 et *dure 5 semaines*. C'est
+Le projet commence le 28 mars 2023 et *dure 4 semaines*. C'est
 un projet individuel. Vous pouvez travailler en groupe si vous 
 le souhaitez mais chaque étudiant devra me rendre un fichier
 de code complété, à m'envoyer par _e-mail_ à l'adresse
 [Dominique Larchey-Wendling](mailto:larchey@loria.fr), et
-ce avant le **9 mai 2023**. Une soutenance sera programmée
-à une date ultérieure, où vous aurez à présenter et commenter
-votre travail. 
+ce avant le **jeudi 4 mai 2023**. Une soutenance est prévue le 
+**vendredi 5 mai après midi**, où vous aurez à présenter et commenter
+votre travail. Les conditions des soutenances (ordre de passage etc.) 
+seront précisées ultérieurement par e-mail.
 
 Je rappelle qu'il est très difficile de commenter
 du code que l'on aurait pas étudié en détails et/ou écrit
