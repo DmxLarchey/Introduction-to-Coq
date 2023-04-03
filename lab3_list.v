@@ -40,18 +40,28 @@ Section list.
 
   Arguments app {A}.
   Check app.
+  Check @app.
   
   Arguments app [A].
   Check app.
 
   Print app.
-
+ 
+  (* cf 0 + n = n *)
   Fact app_nil_head l : nil++l = l.
-  Proof. reflexivity. Qed.
+  Proof.
+    simpl.
+    trivial.
+  Qed.
 
+  (* cf S n + m = S (n+m) *)
   Fact app_cons_head x l m : (x::l) ++ m = x::(l++m).
-  Proof. reflexivity. Qed. 
+  Proof. 
+    simpl.
+    trivial.
+  Qed.
 
+  (* cf n+m+p = n+(m+p) *)
   Fact app_assoc l m p : (l++m)++p = l++m++p.
   Proof.
     induction l as [ | x l IHl ].
@@ -62,6 +72,7 @@ Section list.
     (* induction l; simpl; f_equal; trivial. *)
   Qed.
 
+  (* cf n+0 = n *)
   Fact app_nil_end l : l++nil = l.
   Proof.
   (*  induction l; simpl; f_equal; trivial. *)
@@ -126,14 +137,21 @@ Section list.
   Fact rev_rev_app_eq a l : rev_app a l = rev l ++ a.
   Proof.
     revert a. 
-    induction l as [ | x l IHl ]; intros a; simpl.
-    + trivial.
-    + rewrite app_assoc; simpl.
-      apply IHl.
+    induction l as [ | x l IHl ]; intros a.
+    + simpl. trivial.
+    + simpl.
+      rewrite IHl.
+      rewrite app_assoc.
+      simpl.
+      trivial.
   Qed.
 
   Fact rev_app_equiv l : rev_app nil l = rev l.
-  Proof. rewrite rev_rev_app_eq, app_nil_end; trivial. Qed.
+  Proof. 
+    rewrite rev_rev_app_eq.
+    rewrite app_nil_end. 
+    trivial.
+  Qed.
 
   Reserved Notation "x ∈ l" (at level 70, no associativity).
 

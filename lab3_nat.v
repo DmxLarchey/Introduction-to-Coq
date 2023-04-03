@@ -13,7 +13,7 @@ Section plus_minus_mult.
 
   Print nat.
  
-  Check 1.
+  Check 2.
 
   Reserved Notation "a ⊕ b" (at level 50, left associativity).
   Reserved Notation "a ⊖ b" (at level 50, left associativity).
@@ -29,7 +29,7 @@ Section plus_minus_mult.
 
   Print nat.
 
-  Fixpoint myplus (a b : nat) { struct a } :=
+  Fixpoint myplus (a b : nat) (* { struct a } *) :=
     match a with
       | 0   => b
       | S a' => S (a' ⊕ b)
@@ -58,17 +58,20 @@ Section plus_minus_mult.
   Proof.
     simpl.
     induction n.
-    + simpl; trivial.
+    + trivial.
     + simpl.
+      (* rewrite IHn. *)
       f_equal.
       exact IHn.
   Qed.
 
   Fact plus_a_Sb a b : a ⊕ S b = S (a ⊕ b).
   Proof. (* induction a; simpl; f_equal; trivial. *)
-    induction a as [ | a IHa ].
-    + simpl; trivial.
-    + simpl; f_equal; assumption.
+    induction a as [ | a' IHa' ].
+    + simpl. trivial.
+    + simpl. 
+      f_equal. 
+      assumption.
   Qed.
  
   Hint Resolve plus_0_r plus_a_Sb : core.
@@ -76,35 +79,51 @@ Section plus_minus_mult.
   Fact plus_comm a b : a ⊕ b = b ⊕ a.
   Proof.
     induction a as [ | a IHa ].
-    + simpl; trivial. (* using Hint plus_0_r *)
+    + trivial. (* using Hint plus_0_r *)
     + simpl.
-      rewrite IHa. 
+      rewrite IHa.
+      symmetry.
       trivial.
   Qed.
 
   Fact plus_assoc a b c : (a ⊕ b) ⊕ c = a ⊕ (b ⊕ c).
   Proof. (* induction a; simpl; f_equal; trivial. *)
     induction a as [ | a IHa ].
-    + simpl; trivial.
-    + simpl; f_equal.
+    + simpl. trivial.
+    + simpl. 
+      f_equal.
       trivial.
   Qed.
+
+  Fixpoint myminus' (a b : nat) { struct b } :=
+    match b with
+    | 0 => a
+    | S b' => 
+      match a with
+      | 0 => 0
+      | S a' => myminus' a' b'
+      end
+    end.
 
   Fixpoint myminus (a b : nat) { struct a } :=
     match a, b with
       | 0, _     => 0
-      | S a, 0   => S a 
-      | S a, S b => a ⊖ b
+      | S a', 0   => S a' 
+      | S a', S b' => a' ⊖ b'
     end
   where "a ⊖ b" := (myminus a b).
 
   Print myminus.
 
+  Fact minus'_0 a : myminus' a 0 = a.
+  Proof. trivial. Qed.
+
   Fact minus_0 a : a ⊖ 0 = a.
-  Proof. (* induction a; simpl; trivial. *)
-    destruct a as [ | a ].
-    + simpl; trivial.
-    + simpl; trivial.
+  Proof. (* destruct a; simpl; trivial. *)
+    simpl.
+    destruct a as [ | a' ].
+    + simpl. trivial.
+    + simpl. trivial.
   Qed.
 
   Hint Resolve minus_0 : core.
@@ -112,15 +131,14 @@ Section plus_minus_mult.
   Fact plus_minus a b : (a ⊕ b) ⊖ a = b.
   Proof.
     induction a as [ | a IHa ].
-    + simpl; trivial.
-    + simpl; trivial.
+    + simpl. trivial.
+    + simpl. trivial.
   Qed.
 
   Fact minus_diag a : a ⊖ a = 0.
   Proof.
-    rewrite <- (plus_minus a 0).
-    f_equal.
-    trivial.
+    rewrite <- (plus_0_r a) at 1.
+    apply plus_minus.
   Qed.
 
   Hint Resolve minus_diag : core.
@@ -132,7 +150,9 @@ Section plus_minus_mult.
   Fact plus_cancel_l a b c : a ⊕ b = a ⊕ c -> b = c.
   Proof.
     intros E.
-    rewrite <- (plus_minus a b), E, plus_minus.
+    rewrite <- (plus_minus a c). 
+    rewrite <- E.
+    rewrite plus_minus.
     trivial.
   Qed.
 
@@ -144,9 +164,9 @@ Section plus_minus_mult.
 
   Fact discriminate n : S n = O -> False.
   Proof.
-    (* discriminate. *)
+   (*  discriminate. *)
     intros H.
-    set (f n := match n with 0 => False | S  _ => True end).
+    set (f n := match n with 0 => False | S _ => True end).
     change (f 0).
     rewrite <- H.
     simpl.
